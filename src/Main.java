@@ -70,7 +70,7 @@ public class Main {
                     HashSet<String> files = GetFiles(parentWalk, childWalk);
 
                     for (String path : files) {
-                        cd.calculate(path, repository, parent.getId(),child.getId());
+                        cd.calculate(path, repository, parent,child);
                     }
 
                 }

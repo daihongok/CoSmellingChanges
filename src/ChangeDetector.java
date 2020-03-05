@@ -6,6 +6,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.patch.HunkHeader;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +36,11 @@ public class ChangeDetector  {
      */
     protected static final int RENAME_LIMIT = 500;
 
-    public Map<String, ArrayList<ObjectId>> getChangeHistory() {
+    public Map<String, ArrayList<RevCommit>> getChangeHistory() {
         return changeHistory;
     }
 
-    private Map<String, ArrayList<ObjectId>> changeHistory;
+    private Map<String, ArrayList<RevCommit>> changeHistory;
 
     private DiffFormatter diffFormatter;
     private List<DiffEntry> entries;
@@ -48,22 +49,25 @@ public class ChangeDetector  {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    protected void calculate(String pathFileStr, Repository repo, ObjectId parent, ObjectId child) {
-        initDiff(repo,parent,child);
+    protected void calculate(String pathFileStr, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
+        ObjectId parentCommitId = parentCommit.getId();
+        ObjectId childCommitId = childCommit.getId();
+
+        initDiff(repo,parentCommitId,childCommitId);
         var changeOpt = getDiffOf(pathFileStr);
 
         var hasChanged = false;
         String key;
         if (changeOpt.isPresent()){
             var change = changeOpt.get();
-            ArrayList<ObjectId> changedVersions;
+            ArrayList<RevCommit> changedVersions;
             key = pathFileStr; // store changes per file
             switch (change.getChangeType()) {
                 case ADD:
                 case MODIFY:
                     hasChanged = true;
                     changedVersions = changeHistory.getOrDefault(key, new ArrayList<>());
-                    changedVersions.add(child);
+                    changedVersions.add(0,childCommit); // since we walk backwards, add it to the beginning
                     changeHistory.put(key, changedVersions);
                     break;
                 case COPY:
