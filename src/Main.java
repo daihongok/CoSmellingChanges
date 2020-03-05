@@ -9,35 +9,35 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class Main {
-    static String PROJECT_PATH = "projects/Material-Animations";
-    static String PROJECT_GIT_FILE = PROJECT_PATH + "/.git";
-    static boolean CLONE = false;
 
     public static void main(String[] args) {
 
-
         ChangeDetector cd = new ChangeDetector("change detector");
         Repository repository;
-        System.out.println("Test");
         Git git;
+
         try {
-            if (CLONE) {
-                git = Git.cloneRepository()
-                        .setURI("https://github.com/lgvalle/Material-Animations.git")
-                        .setDirectory(new File(PROJECT_PATH))
-                        .setBranch("refs/heads/master")
-                        .call();
-                repository = git.getRepository();
-            } else {
+            File projectPath = new File(ConfigurationManager.getProjectsDirectory() + "/" + ConfigurationManager.getProjectName());
+
+            if (projectPath.exists()) {
                 FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-                repository = repositoryBuilder.setGitDir(new File(PROJECT_GIT_FILE))
+                repository = repositoryBuilder.setGitDir(new File(projectPath + "/.git"))
                         .readEnvironment() // scan environment GIT_* variables
                         .findGitDir() // scan up the file system tree
                         .setMustExist(true)
                         .build();
+            } else { // Clone and load
+                git = Git.cloneRepository()
+                        .setURI("https://github.com/"+ConfigurationManager.getProjectOwner()+"/"+ConfigurationManager.getProjectName()+".git")
+                        .setDirectory(projectPath)
+                        .setBranch(ConfigurationManager.getProjectBranch())
+                        .call();
+                repository = git.getRepository();
             }
 
             RevWalk walk = new RevWalk(repository);
@@ -77,7 +77,8 @@ public class Main {
         }
 
         var x = 5;
-        findCoChanges(cd);
+        CoChangeDetector ccd = new CoChangeDetector();
+        ccd.findCoChanges(cd);
     }
 
     private static HashSet<String> GetFiles(TreeWalk parentWalk, TreeWalk childWalk) {
@@ -102,41 +103,5 @@ public class Main {
         return files;
     }
 
-    private static void findCoChanges(ChangeDetector cd) {
-        ArrayList<CoChange> coChanges = new ArrayList<>();
 
-        // cd contains `changeHistory`, which is a map between files and versions.
-        // Find files with overlapping versions.
-        Map<String, ArrayList<ObjectId>> fileChanges = cd.getChangeHistory();
-        // We want an ordered collection to avoid duplicate co-changes.
-        String[] keys = fileChanges.keySet().toArray(new String[0]);
-
-        for (int i = 0; i < keys.length; i++) {
-            for (int j = i+1; j < keys.length; j++) {
-                ArrayList<ObjectId> fileChanges1 = fileChanges.get(keys[i]);
-                ArrayList<ObjectId> fileChanges2 = fileChanges.get(keys[j]);
-                List<ObjectId> intersection = intersection(fileChanges1, fileChanges2);
-                if (intersection.size() > 0) {
-                    // Co-change found!
-                    coChanges.add(new CoChange(keys[i], keys[j], intersection));
-                }
-            }
-        }
-        // Print results
-        for (CoChange c : coChanges) {
-            System.out.println(c.toString());
-        }
-    }
-
-    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
-        List<T> list = new ArrayList<T>();
-
-        for (T t : list1) {
-            if(list2.contains(t)) {
-                list.add(t);
-            }
-        }
-
-        return list;
-    }
 }
