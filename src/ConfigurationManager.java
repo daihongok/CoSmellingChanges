@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class ConfigurationManager {
+class ConfigurationManager {
     private static Properties properties;
 
     /**
@@ -31,7 +31,7 @@ public class ConfigurationManager {
      * Gets the directory in which projects are stored that are analyzed.
      * @return Directory without slash at the end.
      */
-    public static String getProjectsDirectory() {
+    static String getProjectsDirectory() {
         return getProperty("ProjectsDirectory");
     }
 
@@ -39,7 +39,7 @@ public class ConfigurationManager {
      * Gets the name of the project to be analyzed. Needs to exactly match the name on Git.
      * @return Project's name.
      */
-    public static String getProjectName() {
+    static String getProjectName() {
         return getProperty("ProjectName");
     }
 
@@ -47,7 +47,7 @@ public class ConfigurationManager {
      * Gets the name of the project's owner to be analyzed. Needs to exactly match the name on Git.
      * @return Project's name.
      */
-    public static String getProjectOwner() {
+    static String getProjectOwner() {
         return getProperty("ProjectOwner");
     }
 
@@ -55,7 +55,7 @@ public class ConfigurationManager {
      * Gets the branch being analyzed.
      * @return The branch.
      */
-    public static String getProjectBranch() {
+    static String getProjectBranch() {
         return getProperty("ProjectBranch");
     }
 
@@ -63,7 +63,7 @@ public class ConfigurationManager {
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.
      */
-    public static int getMaxDaysBetweenCoChanges() {
+    static int getMaxDaysBetweenCoChanges() {
         return Integer.parseInt(getProperty("CoChanges.MaxDaysBetweenCommits"));
     }
 
@@ -71,7 +71,7 @@ public class ConfigurationManager {
      * Max amount of commits to analyze of the project.
      * @return Amount of commits.
      */
-    public static int getMaxAmountOfCommits() {
+    static int getMaxAmountOfCommits() {
         return Integer.parseInt(getProperty("CoChanges.MaxAmountOfCommits"));
     }
 
@@ -79,7 +79,7 @@ public class ConfigurationManager {
      * Minimum amount of overlapping changes to count as co-changing.
      * @return Amount of overlapping changes.
      */
-    public static int getCoChangeThreshold() {
+    static int getCoChangeThreshold() {
         return Integer.parseInt(getProperty("CoChanges.Threshold"));
     }
 }

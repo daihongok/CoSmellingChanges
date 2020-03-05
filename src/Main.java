@@ -1,23 +1,18 @@
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        ChangeDetector cd = new ChangeDetector("change detector");
+        ChangeDetector cd = new ChangeDetector();
         Repository repository;
         Git git;
 
@@ -81,7 +76,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        var x = 5;
         CoChangeDetector ccd = new CoChangeDetector();
         ccd.findCoChanges(cd);
     }

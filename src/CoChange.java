@@ -1,31 +1,18 @@
-import org.eclipse.jgit.lib.ObjectId;
+
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CoChange {
     private File file1;
     private File file2;
     private ArrayList<Tuple<RevCommit>> coVersions;
 
-    public CoChange(String file1, String file2, ArrayList<Tuple<RevCommit>> coVersions) {
+    CoChange(String file1, String file2, ArrayList<Tuple<RevCommit>> coVersions) {
         this.file1 = new File(file1);
         this.file2 = new File(file2);
         this.coVersions = coVersions;
-    }
-
-    public String getFile1() {
-        return file1.toString();
-    }
-
-    public String getFile2() {
-        return file2.toString();
-    }
-
-    public ArrayList<Tuple<RevCommit>> getCoVersions() {
-        return coVersions;
     }
 
     public String toString() {

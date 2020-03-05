@@ -1,15 +1,10 @@
 
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.patch.FileHeader;
-import org.eclipse.jgit.patch.HunkHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -22,21 +17,19 @@ import java.util.*;
  * - FRCH: Frequency of Changes
  * - CHO: Change has Occurred
  */
-public class ChangeDetector  {
-
-    public static final String NAME = "freqOfChanges";
+class ChangeDetector  {
     /**
      * The similarity measured as a percentage of the bytes between two files to count them as a rename.
      * Default value used by git is 60.
      */
-    protected static final int RENAME_SCORE = 50;
+    private static final int RENAME_SCORE = 50;
     /**
      * The maximum number of files to compare within a rename to not reduce performance.
      * Default value used by git is 1000.
      */
-    protected static final int RENAME_LIMIT = 500;
+    private static final int RENAME_LIMIT = 500;
 
-    public Map<String, ArrayList<RevCommit>> getChangeHistory() {
+    Map<String, ArrayList<RevCommit>> getChangeHistory() {
         return changeHistory;
     }
 
@@ -45,18 +38,18 @@ public class ChangeDetector  {
     private DiffFormatter diffFormatter;
     private List<DiffEntry> entries;
 
-    public ChangeDetector(String name) {
+    ChangeDetector() {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    protected void calculate(String pathFileStr, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
+    void calculate(String pathFileStr, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
         ObjectId parentCommitId = parentCommit.getId();
         ObjectId childCommitId = childCommit.getId();
 
         initDiff(repo,parentCommitId,childCommitId);
         var changeOpt = getDiffOf(pathFileStr);
 
-        var hasChanged = false;
+        //var hasChanged = false;
         String key;
         if (changeOpt.isPresent()){
             var change = changeOpt.get();
@@ -65,14 +58,14 @@ public class ChangeDetector  {
             switch (change.getChangeType()) {
                 case ADD:
                 case MODIFY:
-                    hasChanged = true;
+                    //hasChanged = true;
                     changedVersions = changeHistory.getOrDefault(key, new ArrayList<>());
                     changedVersions.add(0,childCommit); // since we walk backwards, add it to the beginning
                     changeHistory.put(key, changedVersions);
                     break;
                 case COPY:
                 case RENAME:
-                    hasChanged = true;
+                    //hasChanged = true;
                     //changedVersions = changeHistory.remove(change.getOldPath()); //TODO is this required for copy?
                     //changedVersions = changedVersions == null ? new ArrayList<>() : changedVersions;
                     //changeHistory.put(key, changedVersions); //TODO what do we do here?

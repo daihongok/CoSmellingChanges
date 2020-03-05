@@ -1,16 +1,13 @@
-import org.eclipse.jgit.lib.Config;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class CoChangeDetector {
+class CoChangeDetector {
 
-    public void findCoChanges(ChangeDetector cd) {
+    void findCoChanges(ChangeDetector cd) {
         ArrayList<CoChange> coChanges = new ArrayList<>();
 
         // cd contains `changeHistory`, which is a map between files and versions.
@@ -100,16 +97,4 @@ public class CoChangeDetector {
         return relatedChanges;
     }
     */
-
-    private <T> List<T> intersection(List<T> list1, List<T> list2) {
-        List<T> list = new ArrayList<T>();
-
-        for (T t : list1) {
-            if(list2.contains(t)) {
-                list.add(t);
-            }
-        }
-
-        return list;
-    }
 }
