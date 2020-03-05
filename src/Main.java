@@ -1,9 +1,6 @@
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -11,15 +8,13 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        ChangeDetector cd = new ChangeDetector("change detector");
+        ChangeDetector cd = new ChangeDetector();
         Repository repository;
         Git git;
 
@@ -49,10 +44,8 @@ public class Main {
             RevCommit child = null;
             boolean first = true;
             int commitsAnalyzed = 0;
-            int merges = 0;
 
             for(RevCommit parent : walk) {
-
                 // Stop when we hit the cap of commits to analyze.
                 if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
                     break;
@@ -71,7 +64,7 @@ public class Main {
                         childWalk.setRecursive(true);
                         childWalk.reset(child.getTree());
                         HashSet<String> files = GetFiles(parentWalk, childWalk);
-                        cd.calculate(files, repository, parent.getId(), child.getId());
+                        cd.calculate(files, repository, parent, child);
                     //}
                 }
                 commitsAnalyzed++;
@@ -82,7 +75,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        var x = 5;
         CoChangeDetector ccd = new CoChangeDetector();
         ccd.findCoChanges(cd);
     }

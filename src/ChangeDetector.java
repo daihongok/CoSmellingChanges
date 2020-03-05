@@ -1,14 +1,10 @@
 
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.patch.FileHeader;
-import org.eclipse.jgit.patch.HunkHeader;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -21,50 +17,50 @@ import java.util.*;
  * - FRCH: Frequency of Changes
  * - CHO: Change has Occurred
  */
-public class ChangeDetector  {
-
-    public static final String NAME = "freqOfChanges";
+class ChangeDetector  {
     /**
      * The similarity measured as a percentage of the bytes between two files to count them as a rename.
      * Default value used by git is 60.
      */
-    protected static final int RENAME_SCORE = 50;
+    private static final int RENAME_SCORE = 50;
     /**
      * The maximum number of files to compare within a rename to not reduce performance.
      * Default value used by git is 1000.
      */
-    protected static final int RENAME_LIMIT = 500;
+    private static final int RENAME_LIMIT = 500;
 
-    public Map<String, ArrayList<ObjectId>> getChangeHistory() {
+    Map<String, ArrayList<RevCommit>> getChangeHistory() {
         return changeHistory;
     }
 
-    private Map<String, ArrayList<ObjectId>> changeHistory;
+    private Map<String, ArrayList<RevCommit>> changeHistory;
 
     private DiffFormatter diffFormatter;
     private List<DiffEntry> entries;
 
-    public ChangeDetector(String name) {
+    ChangeDetector() {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    protected void calculate(HashSet<String> files, Repository repo, ObjectId parent, ObjectId child) {
-        initDiff(repo,parent,child);
+    protected void calculate(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
+        ObjectId parentCommitId = parentCommit.getId();
+        ObjectId childCommitId = childCommit.getId();
+
+        initDiff(repo,parentCommitId,childCommitId);
         entries.forEach(entry -> {
             if(files.contains(entry.getNewPath())){
-           // if(entry.getOldPath().endsWith(".java") && entry.getNewPath().endsWith(".java")) {
                 String pathFileStr = entry.getNewPath();
 
                 var hasChanged = false;
                 String key;
-                ArrayList<ObjectId> changedVersions;
+                ArrayList<RevCommit> changedVersions;
                 key = pathFileStr; // store changes per file
                 switch (entry.getChangeType()) {
                     case ADD:
                     case MODIFY:
                         hasChanged = true;
                         changedVersions = changeHistory.getOrDefault(key, new ArrayList<>());
-                        changedVersions.add(child);
+                        changedVersions.add(childCommit);
                         changeHistory.put(key, changedVersions);
                         break;
                     case COPY:
