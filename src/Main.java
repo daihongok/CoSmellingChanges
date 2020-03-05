@@ -70,9 +70,7 @@ public class Main {
                     HashSet<String> files = GetFiles(parentWalk, childWalk);
 
                     for (String path : files) {
-                        if (path.endsWith(".java")) {
-                            cd.calculate(path, repository, parent.getId(),child.getId());
-                        }
+                        cd.calculate(path, repository, parent.getId(),child.getId());
                     }
 
                 }
@@ -96,11 +94,15 @@ public class Main {
 
             while (parentWalk.next()) {
                 String path = parentWalk.getPathString();
-                files.add(path);
+                if (path.endsWith(".java")) {
+                    files.add(path);
+                }
             }
             while (childWalk.next()) {
                 String path = childWalk.getPathString();
-                files.add(path);
+                if (path.endsWith(".java")) {
+                    files.add(path);
+                }
             }
 
         } catch (Exception e) {
