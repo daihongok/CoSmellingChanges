@@ -48,36 +48,38 @@ public class ChangeDetector  {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    protected void calculate(String pathFileStr, Repository repo, ObjectId parent, ObjectId child) {
+    protected void calculate(HashSet<String> files, Repository repo, ObjectId parent, ObjectId child) {
         initDiff(repo,parent,child);
-        var changeOpt = getDiffOf(pathFileStr);
+        entries.forEach(entry -> {
+            if(files.contains(entry.getNewPath())){
+           // if(entry.getOldPath().endsWith(".java") && entry.getNewPath().endsWith(".java")) {
+                String pathFileStr = entry.getNewPath();
 
-        var hasChanged = false;
-        String key;
-        if (changeOpt.isPresent()){
-            var change = changeOpt.get();
-            ArrayList<ObjectId> changedVersions;
-            key = pathFileStr; // store changes per file
-            switch (change.getChangeType()) {
-                case ADD:
-                case MODIFY:
-                    hasChanged = true;
-                    changedVersions = changeHistory.getOrDefault(key, new ArrayList<>());
-                    changedVersions.add(child);
-                    changeHistory.put(key, changedVersions);
-                    break;
-                case COPY:
-                case RENAME:
-                    hasChanged = true;
-                    //changedVersions = changeHistory.remove(change.getOldPath()); //TODO is this required for copy?
-                    //changedVersions = changedVersions == null ? new ArrayList<>() : changedVersions;
-                    //changeHistory.put(key, changedVersions); //TODO what do we do here?
-                    break;
-                case DELETE:
-                default:
-                    break;
-            }
-        }
+                var hasChanged = false;
+                String key;
+                ArrayList<ObjectId> changedVersions;
+                key = pathFileStr; // store changes per file
+                switch (entry.getChangeType()) {
+                    case ADD:
+                    case MODIFY:
+                        hasChanged = true;
+                        changedVersions = changeHistory.getOrDefault(key, new ArrayList<>());
+                        changedVersions.add(child);
+                        changeHistory.put(key, changedVersions);
+                        break;
+                    case COPY:
+                    case RENAME:
+                        hasChanged = true;
+                        //changedVersions = changeHistory.remove(change.getOldPath()); //TODO is this required for copy?
+                        //changedVersions = changedVersions == null ? new ArrayList<>() : changedVersions;
+                        //changeHistory.put(key, changedVersions); //TODO what do we do here?
+                        break;
+                    case DELETE:
+                    default:
+                        break;
+                }
+           }
+        });
     }
 
     /**

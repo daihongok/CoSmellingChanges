@@ -5,8 +5,10 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -43,13 +45,14 @@ public class Main {
             RevWalk walk = new RevWalk(repository);
 
             walk.markStart(walk.parseCommit(repository.resolve("HEAD")));
-            //walk.sort(RevSort.REVERSE);
 
             RevCommit child = null;
             boolean first = true;
             int commitsAnalyzed = 0;
+            int merges = 0;
 
             for(RevCommit parent : walk) {
+
                 // Stop when we hit the cap of commits to analyze.
                 if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
                     break;
@@ -58,23 +61,21 @@ public class Main {
                 if (first) {
                     first = false;
                 } else {
-                    System.out.println(parent.getAuthorIdent().getWhen());
-                    TreeWalk parentWalk = new TreeWalk(repository);
-                    parentWalk.setRecursive(true);
-                    parentWalk.reset(parent.getTree());
+                    //if(child.getParent(0).equals(parent.getId())) {
+                        System.out.println(parent.getAuthorIdent().getWhen());
+                        TreeWalk parentWalk = new TreeWalk(repository);
+                        parentWalk.setRecursive(true);
+                        parentWalk.reset(parent.getTree());
 
-                    TreeWalk childWalk = new TreeWalk(repository);
-                    childWalk.setRecursive(true);
-                    childWalk.reset(child.getTree());
-
-                    HashSet<String> files = GetFiles(parentWalk, childWalk);
-
-                    for (String path : files) {
-                        cd.calculate(path, repository, parent.getId(),child.getId());
-                    }
-
+                        TreeWalk childWalk = new TreeWalk(repository);
+                        childWalk.setRecursive(true);
+                        childWalk.reset(child.getTree());
+                        HashSet<String> files = GetFiles(parentWalk, childWalk);
+                        cd.calculate(files, repository, parent.getId(), child.getId());
+                    //}
                 }
                 commitsAnalyzed++;
+                System.out.println(commitsAnalyzed);
                 child = parent;
             }
         } catch (Exception e) {
