@@ -17,6 +17,7 @@ public class Main {
         ChangeDetector cd = new ChangeDetector();
         Repository repository;
         Git git;
+        long startTime = 0;
 
         try {
             File projectPath = new File(ConfigurationManager.getProjectsDirectory() + "/" + ConfigurationManager.getProjectName());
@@ -36,6 +37,11 @@ public class Main {
                         .call();
                 repository = git.getRepository();
             }
+
+            /*
+            * Start timing the program.
+            */
+            startTime = System.currentTimeMillis();
 
             RevWalk walk = new RevWalk(repository);
 
@@ -64,7 +70,7 @@ public class Main {
                         childWalk.setRecursive(true);
                         childWalk.reset(child.getTree());
                         HashSet<String> files = GetFiles(parentWalk, childWalk);
-                        cd.calculate(files, repository, parent, child);
+                        cd.calculate(files, repository, child.getParent(0), child);
                     //}
                 }
                 commitsAnalyzed++;
@@ -77,6 +83,14 @@ public class Main {
 
         CoChangeDetector ccd = new CoChangeDetector();
         ccd.findCoChanges(cd);
+
+        /*
+         * Finish timing and print result.
+         */
+        final long endTime = System.currentTimeMillis();
+
+        System.out.println("Total execution time: " + (endTime - startTime));
+
     }
 
     private static HashSet<String> GetFiles(TreeWalk parentWalk, TreeWalk childWalk) {
