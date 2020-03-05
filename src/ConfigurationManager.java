@@ -58,4 +58,28 @@ public class ConfigurationManager {
     public static String getProjectBranch() {
         return getProperty("ProjectBranch");
     }
+
+    /**
+     * Gets the maximum amount of days between changes to still be marked as co-changing.
+     * @return The number of days.
+     */
+    public static int getMaxDaysBetweenCoChanges() {
+        return Integer.parseInt(getProperty("CoChanges.MaxDaysBetweenCommits"));
+    }
+
+    /**
+     * Max amount of commits to analyze of the project.
+     * @return Amount of commits.
+     */
+    public static int getMaxAmountOfCommits() {
+        return Integer.parseInt(getProperty("CoChanges.MaxAmountOfCommits"));
+    }
+
+    /**
+     * Minimum amount of overlapping changes to count as co-changing.
+     * @return Amount of overlapping changes.
+     */
+    public static int getCoChangeThreshold() {
+        return Integer.parseInt(getProperty("CoChanges.Threshold"));
+    }
 }

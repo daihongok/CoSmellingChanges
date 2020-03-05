@@ -47,11 +47,18 @@ public class Main {
 
             RevCommit child = null;
             boolean first = true;
+            int commitsAnalyzed = 0;
+
             for(RevCommit parent : walk) {
+                // Stop when we hit the cap of commits to analyze.
+                if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
+                    break;
+                }
+
                 if (first) {
                     first = false;
                 } else {
-
+                    System.out.println(parent.getAuthorIdent().getWhen());
                     TreeWalk parentWalk = new TreeWalk(repository);
                     parentWalk.setRecursive(true);
                     parentWalk.reset(parent.getTree());
@@ -69,7 +76,7 @@ public class Main {
                     }
 
                 }
-
+                commitsAnalyzed++;
                 child = parent;
             }
         } catch (Exception e) {

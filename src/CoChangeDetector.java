@@ -20,7 +20,9 @@ public class CoChangeDetector {
                 ArrayList<ObjectId> fileChanges1 = fileChanges.get(keys[i]);
                 ArrayList<ObjectId> fileChanges2 = fileChanges.get(keys[j]);
                 List<ObjectId> intersection = intersection(fileChanges1, fileChanges2);
-                if (intersection.size() > 0) {
+
+                // Apply the threshold to determine if these files are to be marked as co-changing.
+                if (intersection.size() >= ConfigurationManager.getCoChangeThreshold()) {
                     // Co-change found!
                     coChanges.add(new CoChange(keys[i], keys[j], intersection));
                 }
