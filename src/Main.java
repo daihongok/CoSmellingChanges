@@ -1,13 +1,9 @@
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathSuffixFilter;
-import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
 import java.util.*;
@@ -19,6 +15,7 @@ public class Main {
         ChangeDetector cd = new ChangeDetector();
         Repository repository;
         Git git;
+        long startTime = 0;
 
         try {
             File projectPath = new File(ConfigurationManager.getProjectsDirectory() + "/" + ConfigurationManager.getProjectName());
@@ -39,6 +36,11 @@ public class Main {
                         .call();
                 repository = git.getRepository();
             }
+
+            /*
+            * Start timing the program.
+            */
+            startTime = System.currentTimeMillis();
 
             RevWalk walk = new RevWalk(repository);
 
@@ -82,6 +84,14 @@ public class Main {
 
         CoChangeDetector ccd = new CoChangeDetector();
         ccd.findCoChanges(cd);
+
+        /*
+         * Finish timing and print result.
+         */
+        final long endTime = System.currentTimeMillis();
+
+        System.out.println("Total execution time: " + (endTime - startTime));
+
     }
 
     private static HashSet<String> GetFiles(TreeWalk parentWalk, TreeWalk childWalk) {

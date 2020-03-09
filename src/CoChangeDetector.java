@@ -18,9 +18,16 @@ class CoChangeDetector {
         String[] keys = fileChanges.keySet().toArray(new String[0]);
 
         for (int i = 0; i < keys.length; i++) {
+            ArrayList<RevCommit> fileChanges1 = fileChanges.get(keys[i]);
+
             for (int j = i+1; j < keys.length; j++) {
-                ArrayList<RevCommit> fileChanges1 = fileChanges.get(keys[i]);
                 ArrayList<RevCommit> fileChanges2 = fileChanges.get(keys[j]);
+
+                // Skip combinations that cant produce the threshold of overlapping changing
+                if (fileChanges1.size()*fileChanges2.size() < ConfigurationManager.getCoChangeThreshold()) {
+                    continue;
+                }
+
                 ArrayList<Tuple<RevCommit>> intersection = relatedChanges(fileChanges1, fileChanges2);
 
                 // Apply the threshold to determine if these files are to be marked as co-changing.
