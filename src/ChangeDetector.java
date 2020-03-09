@@ -1,8 +1,10 @@
 
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
@@ -29,11 +31,11 @@ class ChangeDetector  {
      */
     private static final int RENAME_LIMIT = 500;
 
-    Map<String, ArrayList<RevCommit>> getChangeHistory() {
+    Map<String, FileChange> getChangeHistory() {
         return changeHistory;
     }
 
-    private Map<String, ArrayList<RevCommit>> changeHistory;
+    private Map<String, FileChange> changeHistory;
 
     private DiffFormatter diffFormatter;
     private List<DiffEntry> entries;
@@ -48,20 +50,22 @@ class ChangeDetector  {
 
         initDiff(repo,parentCommitId,childCommitId);
         entries.forEach(entry -> {
+            long changedRows = countTotalAmountOfChanges(Optional.of(entry));
+
             if(files.contains(entry.getNewPath())){
                 String pathFileStr = entry.getNewPath();
 
                 var hasChanged = false;
                 String key;
-                ArrayList<RevCommit> changedVersions;
+                FileChange fileChange;
                 key = pathFileStr; // store changes per file
                 switch (entry.getChangeType()) {
                     case ADD:
                     case MODIFY:
                         hasChanged = true;
-                        changedVersions = changeHistory.getOrDefault(key, new ArrayList<>());
-                        changedVersions.add(childCommit);
-                        changeHistory.put(key, changedVersions);
+                        fileChange = changeHistory.getOrDefault(key, new FileChange());
+                        fileChange.addCommit(childCommit);
+                        changeHistory.put(key, fileChange);
                         break;
                     case COPY:
                     case RENAME:
@@ -111,5 +115,39 @@ class ChangeDetector  {
      */
     private Optional<DiffEntry> getDiffOf(String pathSuffix){
         return entries.stream().filter(e -> e.getNewPath().endsWith(pathSuffix)).findFirst();
+    }
+
+    /**
+     * Calculates how much lines were added, deleted and modified in a change entry.
+     * @param entry Change entry to calculate line changes of.
+     * @return
+     */
+    private long countTotalAmountOfChanges(Optional<DiffEntry> entry) {
+        int linesDeleted = 0, linesAdded = 0, linesModified = 0;
+        if (entry.isPresent()){
+            try {
+                FileHeader fileHeader = diffFormatter.toFileHeader(entry.get());
+                for (Edit edit : fileHeader.toEditList()) {
+                    switch (edit.getType()) {
+                        case INSERT:
+                            linesAdded += edit.getEndB() - edit.getBeginB();
+                            break;
+                        case DELETE:
+                            linesDeleted += edit.getEndA() - edit.getBeginA();
+                            break;
+                        case REPLACE:
+                            linesModified += edit.getEndA() - edit.getBeginA();
+                            break;
+                        case EMPTY:
+                            break;
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Cannot convert to file header: " + entry.get().getNewPath());
+            }
+        }else {
+            return 0;
+        }
+        return linesAdded + linesDeleted + linesModified;
     }
 }
