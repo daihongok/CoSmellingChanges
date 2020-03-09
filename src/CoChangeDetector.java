@@ -13,15 +13,15 @@ class CoChangeDetector {
 
         // cd contains `changeHistory`, which is a map between files and versions.
         // Find files with overlapping versions.
-        Map<String, ArrayList<RevCommit>> fileChanges = cd.getChangeHistory();
+        Map<String, FileChange> fileChanges = cd.getChangeHistory();
         // We want an ordered collection to avoid duplicate co-changes.
         String[] keys = fileChanges.keySet().toArray(new String[0]);
 
         for (int i = 0; i < keys.length; i++) {
-            ArrayList<RevCommit> fileChanges1 = fileChanges.get(keys[i]);
+            ArrayList<RevCommit> fileChanges1 = fileChanges.get(keys[i]).getCommits();
 
             for (int j = i+1; j < keys.length; j++) {
-                ArrayList<RevCommit> fileChanges2 = fileChanges.get(keys[j]);
+                ArrayList<RevCommit> fileChanges2 = fileChanges.get(keys[j]).getCommits();
 
                 // Skip combinations that cant produce the threshold of overlapping changing
                 if (fileChanges1.size()*fileChanges2.size() < ConfigurationManager.getCoChangeThreshold()) {

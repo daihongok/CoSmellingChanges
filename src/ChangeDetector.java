@@ -65,6 +65,7 @@ class ChangeDetector  {
                         hasChanged = true;
                         fileChange = changeHistory.getOrDefault(key, new FileChange());
                         fileChange.addCommit(childCommit);
+                        fileChange.addChangedLines(changedRows);
                         changeHistory.put(key, fileChange);
                         break;
                     case COPY:
@@ -148,6 +149,6 @@ class ChangeDetector  {
         }else {
             return 0;
         }
-        return linesAdded + linesDeleted + linesModified;
+        return linesAdded + linesDeleted + 2*linesModified;
     }
 }
