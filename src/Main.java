@@ -1,10 +1,12 @@
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathSuffixFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 
 import java.io.File;
@@ -28,6 +30,7 @@ public class Main {
                         .findGitDir() // scan up the file system tree
                         .setMustExist(true)
                         .build();
+                git = new Git(repository);
             } else { // Clone and load
                 git = Git.cloneRepository()
                         .setURI("https://github.com/"+ConfigurationManager.getProjectOwner()+"/"+ConfigurationManager.getProjectName()+".git")
@@ -54,18 +57,20 @@ public class Main {
                 if (first) {
                     first = false;
                 } else {
-                    //if(child.getParent(0).equals(parent.getId())) {
+                    var directParent = child.getParent(0);
                         System.out.println(parent.getAuthorIdent().getWhen());
+
                         TreeWalk parentWalk = new TreeWalk(repository);
                         parentWalk.setRecursive(true);
-                        parentWalk.reset(parent.getTree());
+                        parentWalk.reset(directParent.getTree());
 
                         TreeWalk childWalk = new TreeWalk(repository);
                         childWalk.setRecursive(true);
                         childWalk.reset(child.getTree());
+
                         HashSet<String> files = GetFiles(parentWalk, childWalk);
-                        cd.calculate(files, repository, parent, child);
-                    //}
+                        cd.calculate(files, repository, directParent, child);
+
                 }
                 commitsAnalyzed++;
                 System.out.println(commitsAnalyzed);
