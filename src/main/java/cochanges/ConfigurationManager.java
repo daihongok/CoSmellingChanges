@@ -93,6 +93,21 @@ public class ConfigurationManager {
     public static String getLastCommit() {
         return getProperty("LastCommit");
     }
+
+    /**
+     * Gets whether commits at different moments can be cochanges.
+     * @return to consider a time factor or not.
+     */
+    public static Boolean getConsiderCommitsOverTime(){
+        return Boolean.parseBoolean(getProperty("CoChanges.ConsiderCommitsOverTime"));
+    }
+    /**
+     * Gets the maximum amount of days between changes to still be marked as co-changing.
+     * @return The number of days.
+     */
+    static int getMaxCommitsBetweenCommits() {
+        return Integer.parseInt(getProperty("CoChanges.MaxCommitsBetweenCommits"));
+    }
     /**
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.

@@ -3,6 +3,7 @@ package cochanges;
 import com.google.gson.Gson;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -20,6 +21,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CoChangeDetector {
+
+    private ArrayList<ObjectId> commitsInOrder;
+
+    public CoChangeDetector(){
+        commitsInOrder = new ArrayList<>();
+    }
 
     private ArrayList<CoChange> findCoChanges(ChangeDetector cd) {
         ArrayList<CoChange> coChanges = new ArrayList<>();
@@ -56,25 +63,40 @@ public class CoChangeDetector {
     private ArrayList<Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
         // Stores commits that changed within the overlapping interval.
         ArrayList<Tuple<RevCommit>> relatedChanges = new ArrayList<>();
-        // Make sure changes1 begins earlier than changes2 given that both are sorted ascending in time.
-        if (changes1.get(0).getCommitterIdent().getWhen().getTime() > changes2.get(0).getCommitterIdent().getWhen().getTime()) {
-            ArrayList<RevCommit> changes1old = changes1;
-            changes1 = changes2;
-            changes2 = changes1old;
-        }
 
-        for (RevCommit current1 : changes1) {
-            Date date1 = current1.getCommitterIdent().getWhen();
-            for (RevCommit current2 : changes2) {
-                Date date2 = current2.getCommitterIdent().getWhen();
-                if (date2.getTime() < date1.getTime()) {
-                    continue; // Fast forward to only compare later commits.
+        if(ConfigurationManager.getConsiderCommitsOverTime()) {
+
+            // Make sure changes1 begins earlier than changes2 given that both are sorted ascending in time.
+            if (changes1.get(0).getCommitterIdent().getWhen().getTime() > changes2.get(0).getCommitterIdent().getWhen().getTime()) {
+                ArrayList<RevCommit> changes1old = changes1;
+                changes1 = changes2;
+                changes2 = changes1old;
+            }
+
+            for (RevCommit current1 : changes1) {
+                Date date1 = current1.getCommitterIdent().getWhen();
+                for (RevCommit current2 : changes2) {
+                    Date date2 = current2.getCommitterIdent().getWhen();
+
+                    // Check if these changes fall within the allowed interval
+                    long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
+                    long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                    if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1, current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
+                        // Make sure item1 always happened earlier than item2 for efficient duplicate filtering.
+                        if (date2.getTime() > date1.getTime()) {
+                            relatedChanges.add(new Tuple<>(current1, current2));
+                        } else {
+                            relatedChanges.add(new Tuple<>(current2, current1));
+                        }
+                    }
                 }
-                // Check if these changes fall within the allowed interval
-                long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
-                long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges()) {
-                    relatedChanges.add(new Tuple<>(current1, current2));
+            }
+        }else{
+            for (RevCommit current1 : changes1) {
+                for (RevCommit current2 : changes2) {
+                    if(current1.equals(current2)) {
+                        relatedChanges.add(new Tuple<>(current1, current2));
+                    }
                 }
             }
         }
@@ -102,6 +124,7 @@ public class CoChangeDetector {
                 if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
                     break;
                 }
+                commitsInOrder.add(currentCommit.getId());
 
                 if (currentCommit.getParentCount() == 0) { // Last commit has no parent.
                     continue;
@@ -128,8 +151,7 @@ public class CoChangeDetector {
             e.printStackTrace();
         }
 
-        CoChangeDetector ccd = new CoChangeDetector();
-        return ccd.findCoChanges(cd);
+        return findCoChanges(cd);
     }
 
     /**
@@ -162,6 +184,36 @@ public class CoChangeDetector {
         }
 
         return files;
+    }
+
+    private int getCommitDistance(ObjectId commitA, ObjectId commitB){
+        int indexA = 0, indexB = 0,index = 0;
+        Boolean aFound = false, bFound = false;
+
+        for(ObjectId commitId : commitsInOrder){
+            if(commitId.equals(commitA)){
+                indexA = index;
+                aFound = true;
+            }
+
+            if(commitId.equals(commitB)){
+                indexB = index;
+                bFound = true;
+            }
+
+            if(aFound && bFound){
+                break;
+            }
+            index++;
+        }
+
+        System.out.println(indexA + "," + indexB);
+        if(aFound && bFound) {
+            System.out.println(Math.abs(indexA - indexB) - 1);
+            return Math.abs(indexA - indexB) - 1;
+        }else{
+            return Integer.MAX_VALUE;
+        }
     }
 
     /**
