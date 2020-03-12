@@ -95,37 +95,33 @@ public class CoChangeDetector {
 
             walk.markStart(walk.parseCommit(repository.resolve(ConfigurationManager.getLastCommit())));
 
-            RevCommit child = null;
-            boolean first = true;
             int commitsAnalyzed = 0;
 
-            for (RevCommit parent : walk) {
+            for (RevCommit currentCommit : walk) {
                 // Stop when we hit the cap of commits to analyze.
                 if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
                     break;
                 }
 
-                if (first) {
-                    first = false;
-                } else {
-                    var directParent = child.getParent(0);
-                    System.out.println(parent.getAuthorIdent().getWhen());
-
-                    TreeWalk parentWalk = new TreeWalk(repository);
-                    parentWalk.setRecursive(true);
-                    parentWalk.reset(directParent.getTree());
-
-                    TreeWalk childWalk = new TreeWalk(repository);
-                    childWalk.setRecursive(true);
-                    childWalk.reset(child.getTree());
-
-                    HashSet<String> files = GetFiles(parentWalk, childWalk);
-                    cd.calculate(files, repository, directParent, child);
-
+                if (currentCommit.getParentCount() == 0) { // Last commit has no parent.
+                    continue;
                 }
+
+                var directParent = currentCommit.getParent(0);
+
+                TreeWalk parentWalk = new TreeWalk(repository);
+                parentWalk.setRecursive(true);
+                parentWalk.reset(directParent.getTree());
+
+                TreeWalk childWalk = new TreeWalk(repository);
+                childWalk.setRecursive(true);
+                childWalk.reset(currentCommit.getTree());
+
+                HashSet<String> files = GetFiles(parentWalk, childWalk);
+                cd.calculate(files, repository, directParent, currentCommit);
+
                 commitsAnalyzed++;
                 System.out.println(commitsAnalyzed);
-                child = parent;
             }
         }
         catch (IOException e) {

@@ -16,7 +16,10 @@ class CoChangeDetectorTest {
         ConfigurationManager.OverrideProperty("ProjectName","CoChangeDetectTest");
         ConfigurationManager.OverrideProperty("ProjectOwner","RonaldKruizinga");
         ConfigurationManager.OverrideProperty("ProjectBranch","refs/heads/master");
-        ConfigurationManager.OverrideProperty("LastCommit","6109deaca7150bcf6703940f03dcd5ff13f6f7ab");
+        ConfigurationManager.OverrideProperty("LastCommit","HEAD");
+        ConfigurationManager.OverrideProperty("CoChanges.MaxDaysBetweenCommits","0");
+        ConfigurationManager.OverrideProperty("CoChanges.MaxAmountOfCommits","100");
+        ConfigurationManager.OverrideProperty("CoChanges.Threshold","1");
     }
 
     @Test
