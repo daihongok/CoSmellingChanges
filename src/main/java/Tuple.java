@@ -1,3 +1,5 @@
+package main.java;
+
 class Tuple<T> {
     private T item1;
     private T item2;

@@ -1,8 +1,9 @@
+package main.java;
+
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -72,9 +73,9 @@ class CoChangeDetector {
         return relatedChanges;
     }
     /*
-    private ArrayList<Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
+    private ArrayList<main.java.Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
         // Stores commits that changed within the overlapping interval.
-        ArrayList<Tuple<RevCommit>> relatedChanges = new ArrayList<>();
+        ArrayList<main.java.Tuple<RevCommit>> relatedChanges = new ArrayList<>();
         int count1 = changes1.size();
         int count2 = changes2.size();
 
@@ -90,8 +91,8 @@ class CoChangeDetector {
             // Check if these changes fall within the allowed interval
             long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
             long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges()) {
-                relatedChanges.add(new Tuple<>(current1, current2));
+            if (daysDiff <= main.java.ConfigurationManager.getMaxDaysBetweenCoChanges()) {
+                relatedChanges.add(new main.java.Tuple<>(current1, current2));
             }
 
             // Move up the index of the list of the element that occurred earlier.

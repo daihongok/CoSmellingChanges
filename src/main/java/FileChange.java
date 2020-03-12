@@ -1,3 +1,5 @@
+package main.java;
+
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.util.ArrayList;
