@@ -95,6 +95,13 @@ public class ConfigurationManager {
     }
 
     /**
+     * Gets whether commits at different moments can be cochanges.
+     * @return to consider a time factor or not.
+     */
+    public static Boolean getConsiderCommitsOverTime(){
+        return Boolean.parseBoolean(getProperty("CoChanges.ConsiderCommitsOverTime"));
+    }
+    /**
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.
      */

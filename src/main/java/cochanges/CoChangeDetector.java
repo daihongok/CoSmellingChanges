@@ -63,25 +63,37 @@ public class CoChangeDetector {
     private ArrayList<Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
         // Stores commits that changed within the overlapping interval.
         ArrayList<Tuple<RevCommit>> relatedChanges = new ArrayList<>();
-        // Make sure changes1 begins earlier than changes2 given that both are sorted ascending in time.
-        if (changes1.get(0).getCommitterIdent().getWhen().getTime() > changes2.get(0).getCommitterIdent().getWhen().getTime()) {
-            ArrayList<RevCommit> changes1old = changes1;
-            changes1 = changes2;
-            changes2 = changes1old;
-        }
 
-        for (RevCommit current1 : changes1) {
-            Date date1 = current1.getCommitterIdent().getWhen();
-            for (RevCommit current2 : changes2) {
-                Date date2 = current2.getCommitterIdent().getWhen();
-                if (date2.getTime() < date1.getTime()) {
-                    continue; // Fast forward to only compare later commits.
+        if(ConfigurationManager.getConsiderCommitsOverTime()) {
+
+            // Make sure changes1 begins earlier than changes2 given that both are sorted ascending in time.
+            if (changes1.get(0).getCommitterIdent().getWhen().getTime() > changes2.get(0).getCommitterIdent().getWhen().getTime()) {
+                ArrayList<RevCommit> changes1old = changes1;
+                changes1 = changes2;
+                changes2 = changes1old;
+            }
+
+            for (RevCommit current1 : changes1) {
+                Date date1 = current1.getCommitterIdent().getWhen();
+                for (RevCommit current2 : changes2) {
+                    Date date2 = current2.getCommitterIdent().getWhen();
+                    if (date2.getTime() < date1.getTime()) {
+                        continue; // Fast forward to only compare later commits.
+                    }
+                    // Check if these changes fall within the allowed interval
+                    long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
+                    long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                    if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1, current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
+                        relatedChanges.add(new Tuple<>(current1, current2));
+                    }
                 }
-                // Check if these changes fall within the allowed interval
-                long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
-                long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1,current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
-                    relatedChanges.add(new Tuple<>(current1, current2));
+            }
+        }else{
+            for (RevCommit current1 : changes1) {
+                for (RevCommit current2 : changes2) {
+                    if(current1.equals(current2)) {
+                        relatedChanges.add(new Tuple<>(current1, current2));
+                    }
                 }
             }
         }
