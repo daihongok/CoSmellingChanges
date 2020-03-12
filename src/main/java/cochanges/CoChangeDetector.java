@@ -1,5 +1,6 @@
 package cochanges;
 
+import com.google.gson.Gson;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Repository;
@@ -8,7 +9,10 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import utility.Tuple;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -162,5 +166,22 @@ public class CoChangeDetector {
         }
 
         return files;
+    }
+
+    /**
+     * Serializes co-changes to JSON and stores them in the given file.
+     * @param filePath File to store JSON data in.
+     */
+    public void storeCoChanges(ArrayList<CoChange> coChanges, String filePath) {
+        try {
+            File coChangeFile = new File(filePath);
+            coChangeFile.createNewFile();
+            PrintWriter coChangeFilePrinter = new PrintWriter(coChangeFile);
+            Gson gson = new Gson();
+            coChangeFilePrinter.println(gson.toJson(coChanges));
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing co-changes to a file.");
+            e.printStackTrace();
+        }
     }
 }
