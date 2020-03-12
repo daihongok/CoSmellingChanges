@@ -1,16 +1,22 @@
 package cochanges;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.TreeWalk;
 import utility.Tuple;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CoChangeDetector {
 
-    public void findCoChanges(ChangeDetector cd) {
+    private ArrayList<CoChange> findCoChanges(ChangeDetector cd) {
         ArrayList<CoChange> coChanges = new ArrayList<>();
 
         // cd contains `changeHistory`, which is a map between files and versions.
@@ -39,10 +45,7 @@ public class CoChangeDetector {
                 }
             }
         }
-        // Print results
-        for (CoChange c : coChanges) {
-            System.out.println(c.toString());
-        }
+        return coChanges;
     }
 
     private ArrayList<Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
@@ -73,38 +76,90 @@ public class CoChangeDetector {
 
         return relatedChanges;
     }
-    /*
-    private ArrayList<main.java.Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
-        // Stores commits that changed within the overlapping interval.
-        ArrayList<main.java.Tuple<RevCommit>> relatedChanges = new ArrayList<>();
-        int count1 = changes1.size();
-        int count2 = changes2.size();
 
-        int index1 = 0;
-        int index2 = 0;
+    /**
+     * Calculates the co-changes for a project.
+     * @param repository
+     * @param git
+     * @return the co-changes.
+     */
+    public ArrayList<CoChange> getCoChanges(Repository repository, Git git) {
+        ChangeDetector cd = new ChangeDetector();
+        try {
+            RevWalk walk = new RevWalk(repository);
 
-        while (index1+1 < count1 || index2+1 < count2) {
-            RevCommit current1 = changes1.get(index1);
-            Date date1 = current1.getAuthorIdent().getWhen();
-            RevCommit current2 = changes2.get(index2);
-            Date date2 = current2.getAuthorIdent().getWhen();
+            walk.markStart(walk.parseCommit(repository.resolve("HEAD")));
 
-            // Check if these changes fall within the allowed interval
-            long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
-            long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            if (daysDiff <= cochanges.ConfigurationManager.getMaxDaysBetweenCoChanges()) {
-                relatedChanges.add(new main.java.Tuple<>(current1, current2));
-            }
+            RevCommit child = null;
+            boolean first = true;
+            int commitsAnalyzed = 0;
 
-            // Move up the index of the list of the element that occurred earlier.
-            if ((date1.getTime() < date2.getTime() || (index2+1) == count2) && (index1+1) != count1) {
-                index1++;
-            } else if ((index2+1) != count2) {
-                index2++;
+            for (RevCommit parent : walk) {
+                // Stop when we hit the cap of commits to analyze.
+                if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
+                    break;
+                }
+
+                if (first) {
+                    first = false;
+                } else {
+                    var directParent = child.getParent(0);
+                    System.out.println(parent.getAuthorIdent().getWhen());
+
+                    TreeWalk parentWalk = new TreeWalk(repository);
+                    parentWalk.setRecursive(true);
+                    parentWalk.reset(directParent.getTree());
+
+                    TreeWalk childWalk = new TreeWalk(repository);
+                    childWalk.setRecursive(true);
+                    childWalk.reset(child.getTree());
+
+                    HashSet<String> files = GetFiles(parentWalk, childWalk);
+                    cd.calculate(files, repository, directParent, child);
+
+                }
+                commitsAnalyzed++;
+                System.out.println(commitsAnalyzed);
+                child = parent;
             }
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        return relatedChanges;
+        CoChangeDetector ccd = new CoChangeDetector();
+        return ccd.findCoChanges(cd);
     }
-    */
+
+    /**
+     * Helper method for finding the union of two file collections.
+     * @param parentWalk
+     * @param childWalk
+     * @return
+     */
+    private static HashSet<String> GetFiles(TreeWalk parentWalk, TreeWalk childWalk) {
+
+        HashSet<String> files = new HashSet<>();
+
+        try {
+
+            while (parentWalk.next()) {
+                String path = parentWalk.getPathString();
+                if (path.endsWith(".java")) {
+                    files.add(path);
+                }
+            }
+            while (childWalk.next()) {
+                String path = childWalk.getPathString();
+                if (path.endsWith(".java")) {
+                    files.add(path);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return files;
+    }
 }

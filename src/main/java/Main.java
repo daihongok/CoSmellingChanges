@@ -1,5 +1,6 @@
 
 import cochanges.ChangeDetector;
+import cochanges.CoChange;
 import cochanges.CoChangeDetector;
 import cochanges.ConfigurationManager;
 import org.eclipse.jgit.api.Git;
@@ -16,7 +17,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ChangeDetector cd = new ChangeDetector();
         Repository repository;
         Git git;
         long startTime = 0;
@@ -46,48 +46,17 @@ public class Main {
             */
             startTime = System.currentTimeMillis();
 
-            RevWalk walk = new RevWalk(repository);
-
-            walk.markStart(walk.parseCommit(repository.resolve("HEAD")));
-
-            RevCommit child = null;
-            boolean first = true;
-            int commitsAnalyzed = 0;
-
-            for(RevCommit parent : walk) {
-                // Stop when we hit the cap of commits to analyze.
-                if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
-                    break;
-                }
-
-                if (first) {
-                    first = false;
-                } else {
-                    var directParent = child.getParent(0);
-                        System.out.println(parent.getAuthorIdent().getWhen());
-
-                        TreeWalk parentWalk = new TreeWalk(repository);
-                        parentWalk.setRecursive(true);
-                        parentWalk.reset(directParent.getTree());
-
-                        TreeWalk childWalk = new TreeWalk(repository);
-                        childWalk.setRecursive(true);
-                        childWalk.reset(child.getTree());
-
-                        HashSet<String> files = GetFiles(parentWalk, childWalk);
-                        cd.calculate(files, repository, directParent, child);
-
-                }
-                commitsAnalyzed++;
-                System.out.println(commitsAnalyzed);
-                child = parent;
+            CoChangeDetector ccd = new CoChangeDetector();
+            ArrayList<CoChange> coChanges = ccd.getCoChanges(repository, git);
+            for (CoChange c: coChanges) {
+                System.out.println(c.toString());
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        CoChangeDetector ccd = new CoChangeDetector();
-        ccd.findCoChanges(cd);
+
 
         /*
          * Finish timing and print result.
@@ -98,31 +67,7 @@ public class Main {
 
     }
 
-    private static HashSet<String> GetFiles(TreeWalk parentWalk, TreeWalk childWalk) {
 
-        HashSet<String> files = new HashSet<>();
-
-        try {
-
-            while (parentWalk.next()) {
-                String path = parentWalk.getPathString();
-                if (path.endsWith(".java")) {
-                    files.add(path);
-                }
-            }
-            while (childWalk.next()) {
-                String path = childWalk.getPathString();
-                if (path.endsWith(".java")) {
-                    files.add(path);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return files;
-    }
 
 
 }
