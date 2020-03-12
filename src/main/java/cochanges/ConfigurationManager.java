@@ -87,6 +87,13 @@ public class ConfigurationManager {
     }
 
     /**
+     * Gets the last commit from which to back track in to the project's history.
+     * @return The commit id (e.g. "HEAD").
+     */
+    public static String getLastCommit() {
+        return getProperty("LastCommit");
+    }
+    /**
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.
      */

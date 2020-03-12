@@ -1,6 +1,7 @@
 package cochanges;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -88,7 +89,7 @@ public class CoChangeDetector {
         try {
             RevWalk walk = new RevWalk(repository);
 
-            walk.markStart(walk.parseCommit(repository.resolve("HEAD")));
+            walk.markStart(walk.parseCommit(repository.resolve(ConfigurationManager.getLastCommit())));
 
             RevCommit child = null;
             boolean first = true;
