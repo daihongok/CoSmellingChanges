@@ -1,4 +1,4 @@
-package main.java;
+package cochanges;
 
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -20,7 +20,7 @@ import java.util.*;
  * - FRCH: Frequency of Changes
  * - CHO: Change has Occurred
  */
-class ChangeDetector  {
+public class ChangeDetector  {
     /**
      * The similarity measured as a percentage of the bytes between two files to count them as a rename.
      * Default value used by git is 60.
@@ -41,11 +41,11 @@ class ChangeDetector  {
     private DiffFormatter diffFormatter;
     private List<DiffEntry> entries;
 
-    ChangeDetector() {
+    public ChangeDetector() {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    protected void calculate(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
+    public void calculate(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
         ObjectId parentCommitId = parentCommit.getId();
         ObjectId childCommitId = childCommit.getId();
 

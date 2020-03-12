@@ -1,12 +1,36 @@
-package main.java;
+package cochanges;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Properties;
 
-class ConfigurationManager {
+public class ConfigurationManager {
     private static Properties properties;
+
+    /**
+     * The following hash map contains overrides for the configured values found in the resource files.
+     * This is used for automated testing to not interfere with the right configuration.
+     */
+    private static HashMap<String, String> testProperties = new HashMap<>();
+
+    /**
+     * Overrides a config property for testing purposes.
+     * @param key Key found in the config file.
+     * @param value Value to assign to this key during runtime.
+     */
+    public static void OverrideProperty(String key, String value) {
+        testProperties.put(key,value);
+    }
+
+    /**
+     * Removes an override for a config property.
+     * @param key Config property to set back to its default found in the file.
+     */
+    public static void RemoveOverriddenProperty(String key) {
+        testProperties.remove(key);
+    }
 
     /**
      * Loads the config file if needed and retrieves the required value.
@@ -26,14 +50,15 @@ class ConfigurationManager {
                 e.printStackTrace();
             }
         }
-        return properties.getProperty(propertyKey);
+        // Return the override value if it exists. Otherwise read it from the resource file.
+        return testProperties.containsKey(propertyKey) ? testProperties.get(propertyKey) : properties.getProperty(propertyKey);
     }
 
     /**
      * Gets the directory in which projects are stored that are analyzed.
      * @return Directory without slash at the end.
      */
-    static String getProjectsDirectory() {
+    public static String getProjectsDirectory() {
         return getProperty("ProjectsDirectory");
     }
 
@@ -41,7 +66,7 @@ class ConfigurationManager {
      * Gets the name of the project to be analyzed. Needs to exactly match the name on Git.
      * @return Project's name.
      */
-    static String getProjectName() {
+    public static String getProjectName() {
         return getProperty("ProjectName");
     }
 
@@ -49,7 +74,7 @@ class ConfigurationManager {
      * Gets the name of the project's owner to be analyzed. Needs to exactly match the name on Git.
      * @return Project's name.
      */
-    static String getProjectOwner() {
+    public static String getProjectOwner() {
         return getProperty("ProjectOwner");
     }
 
@@ -57,7 +82,7 @@ class ConfigurationManager {
      * Gets the branch being analyzed.
      * @return The branch.
      */
-    static String getProjectBranch() {
+    public static String getProjectBranch() {
         return getProperty("ProjectBranch");
     }
 
@@ -73,7 +98,7 @@ class ConfigurationManager {
      * Max amount of commits to analyze of the project.
      * @return Amount of commits.
      */
-    static int getMaxAmountOfCommits() {
+    public static int getMaxAmountOfCommits() {
         return Integer.parseInt(getProperty("CoChanges.MaxAmountOfCommits"));
     }
 

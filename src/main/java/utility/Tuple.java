@@ -1,15 +1,15 @@
-package main.java;
+package utility;
 
-class Tuple<T> {
+public class Tuple<T> {
     private T item1;
     private T item2;
 
-    Tuple(T item1, T item2) {
+    public Tuple(T item1, T item2) {
         this.setItem1(item1);
         this.setItem2(item2);
     }
 
-    T getItem1() {
+    public T getItem1() {
         return item1;
     }
 
@@ -17,7 +17,7 @@ class Tuple<T> {
         this.item1 = item1;
     }
 
-    T getItem2() {
+    public T getItem2() {
         return item2;
     }
 

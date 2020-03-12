@@ -1,5 +1,7 @@
-package main.java;
 
+import cochanges.ChangeDetector;
+import cochanges.CoChangeDetector;
+import cochanges.ConfigurationManager;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;

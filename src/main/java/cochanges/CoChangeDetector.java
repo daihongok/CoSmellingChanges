@@ -1,15 +1,16 @@
-package main.java;
+package cochanges;
 
 import org.eclipse.jgit.revwalk.RevCommit;
+import utility.Tuple;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-class CoChangeDetector {
+public class CoChangeDetector {
 
-    void findCoChanges(ChangeDetector cd) {
+    public void findCoChanges(ChangeDetector cd) {
         ArrayList<CoChange> coChanges = new ArrayList<>();
 
         // cd contains `changeHistory`, which is a map between files and versions.
@@ -91,7 +92,7 @@ class CoChangeDetector {
             // Check if these changes fall within the allowed interval
             long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
             long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            if (daysDiff <= main.java.ConfigurationManager.getMaxDaysBetweenCoChanges()) {
+            if (daysDiff <= cochanges.ConfigurationManager.getMaxDaysBetweenCoChanges()) {
                 relatedChanges.add(new main.java.Tuple<>(current1, current2));
             }
 
