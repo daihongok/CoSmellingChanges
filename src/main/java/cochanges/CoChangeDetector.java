@@ -3,6 +3,7 @@ package cochanges;
 import com.google.gson.Gson;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -20,6 +21,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CoChangeDetector {
+
+    private ArrayList<ObjectId> commitsInOrder;
+
+    public CoChangeDetector(){
+        commitsInOrder = new ArrayList<>();
+    }
 
     private ArrayList<CoChange> findCoChanges(ChangeDetector cd) {
         ArrayList<CoChange> coChanges = new ArrayList<>();
@@ -73,7 +80,7 @@ public class CoChangeDetector {
                 // Check if these changes fall within the allowed interval
                 long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
                 long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges()) {
+                if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1,current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
                     relatedChanges.add(new Tuple<>(current1, current2));
                 }
             }
@@ -105,6 +112,8 @@ public class CoChangeDetector {
                     break;
                 }
 
+                commitsInOrder.add(parent.getId());
+
                 if (first) {
                     first = false;
                 } else {
@@ -132,8 +141,7 @@ public class CoChangeDetector {
             e.printStackTrace();
         }
 
-        CoChangeDetector ccd = new CoChangeDetector();
-        return ccd.findCoChanges(cd);
+        return findCoChanges(cd);
     }
 
     /**
@@ -166,6 +174,36 @@ public class CoChangeDetector {
         }
 
         return files;
+    }
+
+    private int getCommitDistance(ObjectId commitA, ObjectId commitB){
+        int indexA = 0, indexB = 0,index = 0;
+        Boolean aFound = false, bFound = false;
+
+        for(ObjectId commitId : commitsInOrder){
+            if(commitId.equals(commitA)){
+                indexA = index;
+                aFound = true;
+            }
+
+            if(commitId.equals(commitB)){
+                indexB = index;
+                bFound = true;
+            }
+
+            if(aFound && bFound){
+                break;
+            }
+            index++;
+        }
+
+        System.out.println(indexA + "," + indexB);
+        if(aFound && bFound) {
+            System.out.println(Math.abs(indexA - indexB) - 1);
+            return Math.abs(indexA - indexB) - 1;
+        }else{
+            return Integer.MAX_VALUE;
+        }
     }
 
     /**
