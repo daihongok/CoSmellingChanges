@@ -86,9 +86,9 @@ public class CoChangeDetector {
                     if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1, current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
                         // Make sure item1 always happened earlier than item2 for efficient duplicate filtering.
                         if (date2.getTime() > date1.getTime()) {
-                            relatedChanges.add(new Tuple<>(current1, current2));
+                            addUniqueTuple(relatedChanges, new Tuple<>(current1, current2));
                         } else {
-                            relatedChanges.add(new Tuple<>(current2, current1));
+                            addUniqueTuple(relatedChanges, new Tuple<>(current2, current1));
                         }
                     }
                 }
@@ -97,13 +97,27 @@ public class CoChangeDetector {
             for (RevCommit current1 : changes1) {
                 for (RevCommit current2 : changes2) {
                     if(current1.equals(current2)) {
-                        relatedChanges.add(new Tuple<>(current1, current2));
+                        addUniqueTuple(relatedChanges, new Tuple<>(current1, current2));
                     }
                 }
             }
         }
 
         return relatedChanges;
+    }
+
+    private void addUniqueTuple(ArrayList<Tuple<RevCommit>> tuplesList, Tuple tuple){
+        Boolean isUnique = true;
+        for(Tuple existingTuple : tuplesList) {
+            if(existingTuple.getItem1().equals(tuple.getItem1()) &&
+               existingTuple.getItem2().equals(tuple.getItem2())) {
+                isUnique = false;
+                break;
+            }
+        }
+        if(isUnique){
+            tuplesList.add(tuple);
+        }
     }
 
     /**
