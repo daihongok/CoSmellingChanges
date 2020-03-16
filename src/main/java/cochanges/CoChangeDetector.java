@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -144,7 +146,7 @@ public class CoChangeDetector {
                 cd.calculate(files, repository, directParent, currentCommit);
 
                 commitsAnalyzed++;
-                System.out.println(commitsAnalyzed);
+                //System.out.println(commitsAnalyzed);
             }
         }
         catch (IOException e) {
@@ -207,9 +209,9 @@ public class CoChangeDetector {
             index++;
         }
 
-        System.out.println(indexA + "," + indexB);
+        //System.out.println(indexA + "," + indexB);
         if(aFound && bFound) {
-            System.out.println(Math.abs(indexA - indexB) - 1);
+            //System.out.println(Math.abs(indexA - indexB) - 1);
             return Math.abs(indexA - indexB) - 1;
         }else{
             return Integer.MAX_VALUE;
@@ -220,16 +222,34 @@ public class CoChangeDetector {
      * Serializes co-changes to JSON and stores them in the given file.
      * @param filePath File to store JSON data in.
      */
-    public void storeCoChanges(ArrayList<CoChange> coChanges, String filePath) {
+    public void storeCoChanges(CoChangeExport[] coChanges, String filePath) {
         try {
             File coChangeFile = new File(filePath);
             coChangeFile.createNewFile();
-            PrintWriter coChangeFilePrinter = new PrintWriter(coChangeFile);
             Gson gson = new Gson();
-            coChangeFilePrinter.println(gson.toJson(coChanges));
+            Files.write(Paths.get(filePath), gson.toJson(coChanges).getBytes());
         } catch (IOException e) {
             System.out.println("An error occurred while writing co-changes to a file.");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Parses the JSON contents of the file to an array of cochange exports.
+     * @param filePath File to read.
+     * @return Array of CoChangeExports
+     */
+    public CoChangeExport[] readCoChangesFromFile(String filePath) {
+        String content = "";
+        try
+        {
+            content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        Gson gson = new Gson();
+        return gson.fromJson(content,CoChangeExport[].class);
     }
 }

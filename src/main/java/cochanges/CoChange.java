@@ -24,4 +24,17 @@ public class CoChange {
                             .map(tuple -> "("+tuple.getItem1()+", "+tuple.getItem2()+")\r\n")
                             .reduce("",(curr,next) -> curr + next);
     }
+
+    public String getFile1() {
+        return file1.getName();
+    }
+
+    public String getFile2() {
+        return file2.getName();
+    }
+
+    public ArrayList<Tuple<RevCommit>> getCoVersions() {
+        return coVersions;
+    }
+
 }
