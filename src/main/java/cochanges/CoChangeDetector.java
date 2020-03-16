@@ -77,14 +77,17 @@ public class CoChangeDetector {
                 Date date1 = current1.getCommitterIdent().getWhen();
                 for (RevCommit current2 : changes2) {
                     Date date2 = current2.getCommitterIdent().getWhen();
-                    if (date2.getTime() < date1.getTime()) {
-                        continue; // Fast forward to only compare later commits.
-                    }
+
                     // Check if these changes fall within the allowed interval
                     long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
                     long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                     if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1, current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
-                        relatedChanges.add(new Tuple<>(current1, current2));
+                        // Make sure item1 always happened earlier than item2 for efficient duplicate filtering.
+                        if (date2.getTime() > date1.getTime()) {
+                            relatedChanges.add(new Tuple<>(current1, current2));
+                        } else {
+                            relatedChanges.add(new Tuple<>(current2, current1));
+                        }
                     }
                 }
             }
@@ -114,39 +117,34 @@ public class CoChangeDetector {
 
             walk.markStart(walk.parseCommit(repository.resolve(ConfigurationManager.getLastCommit())));
 
-            RevCommit child = null;
-            boolean first = true;
             int commitsAnalyzed = 0;
 
-            for (RevCommit parent : walk) {
+            for (RevCommit currentCommit : walk) {
                 // Stop when we hit the cap of commits to analyze.
                 if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
                     break;
                 }
+                commitsInOrder.add(currentCommit.getId());
 
-                commitsInOrder.add(parent.getId());
-
-                if (first) {
-                    first = false;
-                } else {
-                    var directParent = child.getParent(0);
-                    System.out.println(parent.getAuthorIdent().getWhen());
-
-                    TreeWalk parentWalk = new TreeWalk(repository);
-                    parentWalk.setRecursive(true);
-                    parentWalk.reset(directParent.getTree());
-
-                    TreeWalk childWalk = new TreeWalk(repository);
-                    childWalk.setRecursive(true);
-                    childWalk.reset(child.getTree());
-
-                    HashSet<String> files = GetFiles(parentWalk, childWalk);
-                    cd.calculate(files, repository, directParent, child);
-
+                if (currentCommit.getParentCount() == 0) { // Last commit has no parent.
+                    continue;
                 }
+
+                var directParent = currentCommit.getParent(0);
+
+                TreeWalk parentWalk = new TreeWalk(repository);
+                parentWalk.setRecursive(true);
+                parentWalk.reset(directParent.getTree());
+
+                TreeWalk childWalk = new TreeWalk(repository);
+                childWalk.setRecursive(true);
+                childWalk.reset(currentCommit.getTree());
+
+                HashSet<String> files = GetFiles(parentWalk, childWalk);
+                cd.calculate(files, repository, directParent, currentCommit);
+
                 commitsAnalyzed++;
                 System.out.println(commitsAnalyzed);
-                child = parent;
             }
         }
         catch (IOException e) {
