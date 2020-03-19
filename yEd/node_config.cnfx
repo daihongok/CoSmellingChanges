@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<styles>
+  <style name="New Configuration" scope="node" selectionOnly="false">
+    <mapping>
+      <source name="Text" origin="customProperty" type="string"/>
+      <target name="labelText" type="string">
+        <hints>
+          <hint type="int">0</hint>
+        </hints>
+      </target>
+      <conversion type="asIs"/>
+    </mapping>
+  </style>
+  <style name="New Configuration" scope="edge" selectionOnly="false">
+    <mapping>
+      <source name="weight" origin="customProperty" type="int"/>
+      <target name="labelText" type="string">
+        <hints>
+          <hint type="int">0</hint>
+        </hints>
+      </target>
+      <conversion type="asIs"/>
+    </mapping>
+  </style>
+</styles>

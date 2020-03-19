@@ -1,5 +1,6 @@
 
 import cochanges.*;
+import graph.GraphBuilder;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -26,6 +27,7 @@ public class Main {
 
         CoChangeDetector ccd = new CoChangeDetector();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project.getRepository(), project.getGit());
+        GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
             System.out.println(c.toString());
         }
