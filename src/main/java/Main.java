@@ -3,15 +3,14 @@ import cochanges.*;
 import graph.GraphBuilder;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.treewalk.TreeWalk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
 
 public class Main {
+    private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
 
@@ -29,7 +28,7 @@ public class Main {
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project.getRepository(), project.getGit());
         GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
-            System.out.println(c.toString());
+            logger.debug(c.toString());
         }
 
         /*
@@ -37,7 +36,7 @@ public class Main {
          */
         final long endTime = System.currentTimeMillis();
 
-        System.out.println("Total execution time: " + (endTime - startTime));
+        logger.info("Total execution time: " + (endTime - startTime));
 
     }
 
