@@ -7,6 +7,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import utility.Tuple;
 
@@ -77,6 +78,7 @@ public class CoChangeDetector {
 
             for (RevCommit current1 : changes1) {
                 Date date1 = current1.getCommitterIdent().getWhen();
+
                 for (RevCommit current2 : changes2) {
                     Date date2 = current2.getCommitterIdent().getWhen();
 
@@ -130,6 +132,8 @@ public class CoChangeDetector {
         ChangeDetector cd = new ChangeDetector();
         try {
             RevWalk walk = new RevWalk(repository);
+            //Ignore merges
+            walk.setRevFilter(RevFilter.NO_MERGES);
 
             walk.markStart(walk.parseCommit(repository.resolve(ConfigurationManager.getLastCommit())));
 
