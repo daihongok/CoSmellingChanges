@@ -32,7 +32,7 @@ class CoChangeDetectorTest {
     @Test
     void CoChangeTest() {
         CoChangeProject project = CoChangeProject.CreateFromConfig();
-        ArrayList<CoChange> coChanges = ccd.getCoChanges(project.getRepository(), project.getGit());
+        ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
         CoChangeExport[] foundCoChanges = coChanges.stream().map(CoChangeExport::new).toArray(CoChangeExport[]::new);
         CoChangeExport[] actualCoChanges = ccd.readCoChangesFromFile("resources/validation/full-project-test-1.json");
         // First check if the pairs of both lists are identical

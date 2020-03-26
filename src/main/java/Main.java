@@ -5,9 +5,12 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utility.ListOperations;
+import utility.Tuple;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -25,7 +28,7 @@ public class Main {
         startTime = System.currentTimeMillis();
 
         CoChangeDetector ccd = new CoChangeDetector();
-        ArrayList<CoChange> coChanges = ccd.getCoChanges(project.getRepository(), project.getGit());
+        ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
         GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
             logger.debug(c.toString());
@@ -38,6 +41,18 @@ public class Main {
 
         logger.info("Total execution time: " + (endTime - startTime));
 
+        /*
+         * Info for chi^2 test
+         */
+        // 1) total amount of pairs
+        HashSet<String> distinctFiles = project.getDistinctFiles(project.getWalk(), ConfigurationManager.getMaxAmountOfCommits());
+        ArrayList<Tuple<String>> tuples = ListOperations.getUniquePairs(distinctFiles);
+        logger.info("[CHI^2] TOTAL PAIRS: " + tuples.size());
+        // 2) co-changed pairs
+        List<Tuple<String>> coChangedPairs = coChanges.stream().map(cc -> new Tuple<>(cc.getFile1(), cc.getFile2())).collect(Collectors.toList());
+        logger.info("[CHI^2] CO-CHANGED PAIRS: " + coChangedPairs.size());
+        // 3) not co-changed pairs
+        logger.info("[CHI^2] NOT CO-CHANGED PAIRS: " + (tuples.size() - coChangedPairs.size()));
     }
 
 

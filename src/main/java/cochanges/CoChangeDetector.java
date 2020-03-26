@@ -124,18 +124,14 @@ public class CoChangeDetector {
 
     /**
      * Calculates the co-changes for a project.
-     * @param repository
-     * @param git
+     * @param project An initialized project used to get the git repo and commit walk.
      * @return the co-changes.
      */
-    public ArrayList<CoChange> getCoChanges(Repository repository, Git git) {
+    public ArrayList<CoChange> getCoChanges(CoChangeProject project) {
         ChangeDetector cd = new ChangeDetector();
         try {
-            RevWalk walk = new RevWalk(repository);
-            //Ignore merges
-            walk.setRevFilter(RevFilter.NO_MERGES);
-
-            walk.markStart(walk.parseCommit(repository.resolve(ConfigurationManager.getLastCommit())));
+            Repository repository = project.getRepository();
+            RevWalk walk = project.getWalk();
 
             int commitsAnalyzed = 0;
 

@@ -2,10 +2,16 @@ package cochanges;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class CoChangeProject {
     private Git git;
@@ -51,6 +57,65 @@ public class CoChangeProject {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Creates a walk over commits from the configured start, skipping merges.
+     * @return The walk.
+     */
+    public RevWalk getWalk() {
+        RevWalk walk = new RevWalk(repository);
+        //Ignore merges
+        walk.setRevFilter(RevFilter.NO_MERGES);
+
+        try {
+            walk.markStart(walk.parseCommit(repository.resolve(ConfigurationManager.getLastCommit())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return walk;
+    }
+
+    public HashSet<String> getDistinctFiles(RevWalk commitList, int commitsToAnalyze) {
+        HashSet<String> distinctFiles = new HashSet<>();
+        int commitsAnalyzed = 0;
+
+        for (RevCommit commit : commitList) {
+            if (commitsAnalyzed == commitsToAnalyze) {
+                break;
+            }
+            HashSet<String> filesAffected = getAffectedFilesOfCommit(commit);
+            distinctFiles.addAll(filesAffected);
+
+            commitsAnalyzed++;
+        }
+
+        return distinctFiles;
+    }
+
+    /**
+     * Gets a set of files affected (changed) by this commit.
+     * @param commit RevCommit
+     * @return Distinct affected files.
+     */
+    private HashSet<String> getAffectedFilesOfCommit(RevCommit commit) {
+        HashSet<String> filesAffected = new HashSet<>();
+        TreeWalk commitTreeWalk = new TreeWalk(repository);
+        commitTreeWalk.setRecursive(true);
+        try {
+            commitTreeWalk.reset(commit.getTree());
+
+            while (commitTreeWalk.next()) {
+                String path = commitTreeWalk.getPathString();
+                if (path.endsWith(".java")) {
+                    filesAffected.add(path);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return filesAffected;
     }
 
     public Git getGit() {
