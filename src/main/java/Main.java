@@ -1,10 +1,12 @@
 
 import cochanges.*;
+import export.CSVExporter;
 import graph.GraphBuilder;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import smells.SmellGraph;
 import utility.ListOperations;
 import utility.Tuple;
 
@@ -29,6 +31,8 @@ public class Main {
 
         CoChangeDetector ccd = new CoChangeDetector();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
+        // Write coChanges to CSV file
+        CSVExporter.writeToCSV("resources/cochanges.csv",coChanges);
         GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
             logger.debug(c.toString());
@@ -53,6 +57,8 @@ public class Main {
         logger.info("[CHI^2] CO-CHANGED PAIRS: " + coChangedPairs.size());
         // 3) not co-changed pairs
         logger.info("[CHI^2] NOT CO-CHANGED PAIRS: " + (tuples.size() - coChangedPairs.size()));
+        // 4) pairs that occur in a code smell
+        SmellGraph smellGraph = SmellGraph.BuildFromFile("resources/swagger-core-smells.graphml");
     }
 
 
