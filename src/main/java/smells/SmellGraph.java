@@ -25,7 +25,7 @@ public class SmellGraph {
      * @param file Path to a file, including the file itself.
      * @return Graph constructed from the data in the file.
      */
-    public static SmellGraph BuildFromFile(String file) {
+    public static SmellGraph buildFromFile(String file) {
         Graph graph = TinkerGraph.open();
         GraphTraversalSource g = graph.traversal();
 
@@ -43,6 +43,7 @@ public class SmellGraph {
 
         return smellGraph;
     }
+
 
     /* Getters and Setters */
 

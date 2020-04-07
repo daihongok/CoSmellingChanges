@@ -1,6 +1,7 @@
 package export;
 
 import cochanges.CoChange;
+import utility.Tuple;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class CSVExporter {
      * @param filePath CSV file to store data in
      * @param coChanges Co-changes to store
      */
-    public static void writeToCSV(String filePath, ArrayList<CoChange> coChanges) {
+    public static void storeCoChanges(String filePath, ArrayList<CoChange> coChanges) {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
@@ -41,6 +42,38 @@ public class CSVExporter {
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(coChange.getCoVersions().size());
                 bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Exports a list of file combinations to a file.
+     * @param filePath csv file to store the pairs in
+     * @param pairs file pairs to store
+     */
+    public static void storeFilePairs(String filePath, ArrayList<Tuple<String>> pairs) {
+        try
+        {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
+            // Write header line
+            String headerLine = "file1" +
+                    CSV_SEPARATOR +
+                    "file2";
+            bw.write(headerLine);
+            bw.newLine();
+            // Write data records
+            for (Tuple<String> nonCoChange : pairs)
+            {
+                String oneLine = nonCoChange.getItem1() +
+                        CSV_SEPARATOR +
+                        nonCoChange.getItem2();
+                bw.write(oneLine);
                 bw.newLine();
             }
             bw.flush();

@@ -6,11 +6,11 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import smells.SmellGraph;
+import smells.Smell;
+import smells.SmellImporter;
 import utility.ListOperations;
 import utility.Tuple;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +32,7 @@ public class Main {
         CoChangeDetector ccd = new CoChangeDetector();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
         // Write coChanges to CSV file
-        CSVExporter.writeToCSV("resources/cochanges.csv",coChanges);
+        CSVExporter.storeCoChanges("resources/cochanges.csv",coChanges);
         GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
             logger.debug(c.toString());
@@ -51,14 +51,43 @@ public class Main {
         // 1) total amount of pairs
         HashSet<String> distinctFiles = project.getDistinctFiles(project.getWalk(), ConfigurationManager.getMaxAmountOfCommits());
         ArrayList<Tuple<String>> tuples = ListOperations.getUniquePairs(distinctFiles);
-        logger.info("[CHI^2] TOTAL PAIRS: " + tuples.size());
+        CSVExporter.storeFilePairs("resources/file_pairs.csv",tuples);
+        /*
+        logger.info("total pairs: " + tuples.size());
         // 2) co-changed pairs
         List<Tuple<String>> coChangedPairs = coChanges.stream().map(cc -> new Tuple<>(cc.getFile1(), cc.getFile2())).collect(Collectors.toList());
-        logger.info("[CHI^2] CO-CHANGED PAIRS: " + coChangedPairs.size());
+        logger.info("co-changed pairs: " + coChangedPairs.size());
+
         // 3) not co-changed pairs
-        logger.info("[CHI^2] NOT CO-CHANGED PAIRS: " + (tuples.size() - coChangedPairs.size()));
+        HashSet<Tuple<String>> notCoChanging = new HashSet<>(tuples);
+        notCoChanging.removeAll(coChangedPairs);
+        logger.info("not co-changed pairs: " + notCoChanging.size());
+
         // 4) pairs that occur in a code smell
-        SmellGraph smellGraph = SmellGraph.BuildFromFile("resources/swagger-core-smells.graphml");
+        ArrayList<Smell> smells = SmellImporter.LoadSmellsFromCSVFile(true);
+        HashSet<Tuple<String>> smellingPairs = new HashSet<>();
+        smells.forEach(smell -> smellingPairs.addAll(ListOperations.getUniquePairs(new HashSet<>(smell.getAffectedComponents()))));
+        logger.info("smelling pairs: " + smellingPairs.size());
+
+        // 5) pairs occureing in both a smell and a co-change
+        Set<Tuple<String>> intersection = new HashSet<>(coChangedPairs); // use the copy constructor
+        intersection.retainAll(smellingPairs);
+        logger.info("[CHI^2] SMELLING AND CO-CHANGED PAIRS: " + intersection.size());
+
+        // 6) pairs occuring in neither a smell nor a co-change
+        HashSet<Tuple<String>> notSmellingNotCochanging = new HashSet<>(notCoChanging);
+        notSmellingNotCochanging.removeAll(smellingPairs);
+        logger.info("[CHI^2] NOT SMELLING AND NOT CO-CHANGED PAIRS: " + notSmellingNotCochanging.size());
+
+        // 7) not smelling and co-changing
+        HashSet<Tuple<String>> notSmellingAndCochanging = new HashSet<>(coChangedPairs);
+        notSmellingAndCochanging.removeAll(smellingPairs);
+        logger.info("[CHI^2] NOT SMELLING AND CO-CHANGED PAIRS: " + notSmellingAndCochanging.size());
+
+        // 8) smelling and not co-changing
+        HashSet<Tuple<String>> smellingNotCoChanging = new HashSet<>(smellingPairs);
+        smellingNotCoChanging.removeAll(coChangedPairs);
+        logger.info("[CHI^2] SMELLING AND NOT CO-CHANGED PAIRS: " + smellingNotCoChanging.size());*/
     }
 
 
