@@ -27,6 +27,8 @@ public class CoChangeDetector {
 
     private ArrayList<ObjectId> commitsInOrder;
 
+    private HashSet<String> changedFiles;
+
     public CoChangeDetector(){
         commitsInOrder = new ArrayList<>();
     }
@@ -37,8 +39,11 @@ public class CoChangeDetector {
         // cd contains `changeHistory`, which is a map between files and versions.
         // Find files with overlapping versions.
         Map<String, FileChange> fileChanges = cd.getChangeHistory();
+        changedFiles = new HashSet<>();
+        //Set to hashset
+        changedFiles.addAll(fileChanges.keySet());
         // We want an ordered collection to avoid duplicate co-changes.
-        String[] keys = fileChanges.keySet().toArray(new String[0]);
+        String[] keys = changedFiles.toArray(new String[0]);
 
         for (int i = 0; i < keys.length; i++) {
             ArrayList<RevCommit> fileChanges1 = fileChanges.get(keys[i]).getCommits();
@@ -265,5 +270,9 @@ public class CoChangeDetector {
         }
         Gson gson = new Gson();
         return gson.fromJson(content,CoChangeExport[].class);
+    }
+
+    public HashSet<String> getChangedFiles() {
+        return changedFiles;
     }
 }
