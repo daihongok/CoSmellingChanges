@@ -49,7 +49,7 @@ public class Main {
          * Info for chi^2 test
          */
         // 1) total amount of pairs
-        HashSet<String> distinctFiles = project.getDistinctFiles(project.getWalk(), ConfigurationManager.getMaxAmountOfCommits());
+        HashSet<String> distinctFiles = ccd.getChangedFiles();
         ArrayList<Tuple<String>> tuples = ListOperations.getUniquePairs(distinctFiles);
         CSVExporter.storeFilePairs("resources/file_pairs.csv",tuples);
         /*
