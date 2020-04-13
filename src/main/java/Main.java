@@ -31,6 +31,9 @@ public class Main {
 
         CoChangeDetector ccd = new CoChangeDetector();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
+        // Post processing of co-changes.
+        // Attach begin and end timestamps to each co-change.
+
         // Write coChanges to CSV file
         CSVExporter.storeCoChanges("resources/cochanges.csv",coChanges);
         GraphBuilder.BuildAndPersist(coChanges);

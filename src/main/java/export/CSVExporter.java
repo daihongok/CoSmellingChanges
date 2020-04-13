@@ -34,6 +34,10 @@ public class CSVExporter {
             headerLine.append("file2");
             headerLine.append(CSV_SEPARATOR);
             headerLine.append("threshold");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("startdate");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("enddate");
             bw.write(headerLine.toString());
             bw.newLine();
             // Write data records
@@ -45,6 +49,10 @@ public class CSVExporter {
                 oneLine.append(coChange.getFile2());
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(coChange.getCoVersions().size());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(coChange.getStartDate());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(coChange.getEndDate());
                 bw.write(oneLine.toString());
                 bw.newLine();
             }
