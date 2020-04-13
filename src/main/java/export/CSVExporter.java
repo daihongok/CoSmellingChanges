@@ -1,9 +1,13 @@
 package export;
 
 import cochanges.CoChange;
+import cochanges.ConfigurationManager;
 import utility.Tuple;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -64,15 +68,25 @@ public class CSVExporter {
             // Write header line
             String headerLine = "file1" +
                     CSV_SEPARATOR +
-                    "file2";
+                    "file2" +
+                    CSV_SEPARATOR +
+                    "file1Size"+
+                    CSV_SEPARATOR +
+                    "file2Size";
             bw.write(headerLine);
             bw.newLine();
             // Write data records
             for (Tuple<String> nonCoChange : pairs)
             {
+                long sizeOne = getFileSize(nonCoChange.getItem1());
+                long sizeTwo = getFileSize(nonCoChange.getItem2());
                 String oneLine = nonCoChange.getItem1() +
-                        CSV_SEPARATOR +
-                        nonCoChange.getItem2();
+                    CSV_SEPARATOR +
+                    nonCoChange.getItem2()+
+                    CSV_SEPARATOR +
+                    sizeOne +
+                    CSV_SEPARATOR +
+                    sizeTwo;
                 bw.write(oneLine);
                 bw.newLine();
             }
@@ -81,6 +95,15 @@ public class CSVExporter {
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static long getFileSize(String filepath){
+        Path path = Paths.get("projects/" + ConfigurationManager.getProjectName() + "/" + filepath);
+        try {
+            return Files.lines(path).count();
+        } catch (IOException e) {
+            return -1;
         }
     }
 }
