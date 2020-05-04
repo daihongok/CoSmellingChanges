@@ -31,6 +31,7 @@ public class Main {
 
         CoChangeDetector ccd = new CoChangeDetector();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
+        project.printProjectAnalysisInfo();
         // Post processing of co-changes.
         // Attach begin and end timestamps to each co-change.
 
