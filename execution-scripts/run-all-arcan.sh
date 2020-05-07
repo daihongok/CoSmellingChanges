@@ -19,6 +19,9 @@ srun ./clone-project-run-arcan.sh -p druid -u https://github.com/apache/druid.gi
 srun ./clone-project-run-arcan.sh -p elasticsearch -u https://github.com/elastic/elasticsearch.git -b master -startdate 2016-05-07 -d s2550709
 srun ./clone-project-run-arcan.sh -p guava -u https://github.com/google/guava.git -b master -startdate 2011-05-11 -d s2550709
 srun ./clone-project-run-arcan.sh -p hibernate-orm -u https://github.com/hibernate/hibernate-orm.git -b master -startdate 2007-12-07 -d s2550709
+srun ./clone-project-run-arcan.sh -p jackson-databind -u https://github.com/FasterXML/jackson-databind.git -b master -startdate 2012-07-18 -d s2550709
+srun ./clone-project-run-arcan.sh -p jenkins -u https://github.com/jenkinsci/jenkins.git -b master -startdate 2015-11-08 -d s2550709
+srun ./clone-project-run-arcan.sh -p junit5 -u https://github.com/junit-team/junit5.git -b master -startdate 2015-10-31 -d s2550709
 
 srun ./clone-project-run-arcan.sh -p pgjdbc -u https://github.com/pgjdbc/pgjdbc.git -b master -startdate 2001-05-16 -d s2550709
 srun ./clone-project-run-arcan.sh -p roboelectric -u https://github.com/robolectric/robolectric.git -b master -startdate 2015-01-06 -d s2550709
