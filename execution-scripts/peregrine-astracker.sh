@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=run_astracker
+#SBATCH --job-name=run_astracker_xerces_1
 #SBATCH --mail-type=ALL
 #SBATCH --time=1-12:00
 #SBATCH --mail-user=r.j.scheedler@student.rug.nl

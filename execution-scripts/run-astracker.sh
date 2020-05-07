@@ -5,10 +5,11 @@
 
 # Constants
 ASTRACKER_JAR="astracker.jar"
-PROJECT="sonarlint-intellij"
-INPUT_DATA="arcanoutput/${PROJECT}"
-OUTPUT_DIR="astracker_output"
-SOURCE_CODE_DIR="projects/${PROJECT}"
+PROJECT="xerces2-j"
+DATA_FOLDER="s2550709"
+INPUT_DATA="/data/${DATA_FOLDER}/arcanoutput/${PROJECT}"
+OUTPUT_DIR="/data/${DATA_FOLDER}/astracker_output"
+SOURCE_CODE_DIR="/data/${DATA_FOLDER}/projects/${PROJECT}"
 
 
 # Function for executing the astracker jar with the passed arguments.
