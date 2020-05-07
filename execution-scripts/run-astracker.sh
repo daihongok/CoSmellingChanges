@@ -5,7 +5,7 @@
 
 # Constants
 ASTRACKER_JAR="astracker.jar"
-PROJECT="sonarlint-intellij"
+PROJECT="swagger-core"
 INPUT_DATA="arcanoutput/${PROJECT}"
 OUTPUT_DIR="astracker_output"
 SOURCE_CODE_DIR="projects/${PROJECT}"
