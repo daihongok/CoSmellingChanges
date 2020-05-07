@@ -17,6 +17,8 @@ srun ./clone-project-run-arcan.sh -p argouml -u https://github.com/argouml-tigri
 srun ./clone-project-run-arcan.sh -p cassandra -u https://github.com/apache/cassandra.git -b trunk -startdate 2010-10-02 -d s2550709
 srun ./clone-project-run-arcan.sh -p druid -u https://github.com/apache/druid.git -b master -startdate 2013-01-02 -d s2550709
 srun ./clone-project-run-arcan.sh -p elasticsearch -u https://github.com/elastic/elasticsearch.git -b master -startdate 2016-05-07 -d s2550709
+srun ./clone-project-run-arcan.sh -p guava -u https://github.com/google/guava.git -b master -startdate 2011-05-11 -d s2550709
+srun ./clone-project-run-arcan.sh -p hibernate-orm -u https://github.com/hibernate/hibernate-orm.git -b master -startdate 2007-12-07 -d s2550709
 
 srun ./clone-project-run-arcan.sh -p roboelectric -u https://github.com/robolectric/robolectric.git -b master -startdate 2015-01-06 -d s2550709
 srun ./clone-project-run-arcan.sh -p sonarlint-intellij -u https://github.com/SonarSource/sonarlint-intellij.git -b master -d s2550709
