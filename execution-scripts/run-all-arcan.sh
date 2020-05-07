@@ -18,7 +18,8 @@ srun ./clone-project-run-arcan.sh -p cassandra -u https://github.com/apache/cass
 srun ./clone-project-run-arcan.sh -p druid -u https://github.com/apache/druid.git -b master -startdate 2013-01-02 -d s2550709
 srun ./clone-project-run-arcan.sh -p elasticsearch -u https://github.com/elastic/elasticsearch.git -b master -startdate 2016-05-07 -d s2550709
 
-srun ./clone-project-run-arcan.sh -p poi -u https://github.com/apache/poi.git -b master -startdate 2011-05-20 -d s2550709
+srun ./clone-project-run-arcan.sh -p pdfbox -u https://github.com/apache/pdfbox.git -b trunk -startdate 2011-10-13 -d s2550709
+srun ./clone-project-run-arcan.sh -p poi -u https://github.com/apache/poi.git -b trunk -startdate 2011-05-20 -d s2550709
 srun ./clone-project-run-arcan.sh -p pgjdbc -u https://github.com/pgjdbc/pgjdbc.git -b master -startdate 2001-05-16 -d s2550709
 srun ./clone-project-run-arcan.sh -p roboelectric -u https://github.com/robolectric/robolectric.git -b master -startdate 2015-01-06 -d s2550709
 srun ./clone-project-run-arcan.sh -p sonarlint-intellij -u https://github.com/SonarSource/sonarlint-intellij.git -b master -d s2550709
