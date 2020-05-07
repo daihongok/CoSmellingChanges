@@ -20,6 +20,7 @@ srun ./clone-project-run-arcan.sh -p elasticsearch -u https://github.com/elastic
 srun ./clone-project-run-arcan.sh -p guava -u https://github.com/google/guava.git -b master -startdate 2011-05-11 -d s2550709
 srun ./clone-project-run-arcan.sh -p hibernate-orm -u https://github.com/hibernate/hibernate-orm.git -b master -startdate 2007-12-07 -d s2550709
 
+srun ./clone-project-run-arcan.sh -p lucene-solr -u https://github.com/apache/lucene-solr.git -b master -startdate 2016-07-12 -d s2550709
 srun ./clone-project-run-arcan.sh -p pdfbox -u https://github.com/apache/pdfbox.git -b trunk -startdate 2011-10-13 -d s2550709
 srun ./clone-project-run-arcan.sh -p poi -u https://github.com/apache/poi.git -b trunk -startdate 2011-05-20 -d s2550709
 srun ./clone-project-run-arcan.sh -p pgjdbc -u https://github.com/pgjdbc/pgjdbc.git -b master -startdate 2001-05-16 -d s2550709
