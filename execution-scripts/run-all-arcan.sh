@@ -20,6 +20,7 @@ srun ./clone-project-run-arcan.sh -p elasticsearch -u https://github.com/elastic
 srun ./clone-project-run-arcan.sh -p guava -u https://github.com/google/guava.git -b master -startdate 2011-05-11 -d s2550709
 srun ./clone-project-run-arcan.sh -p hibernate-orm -u https://github.com/hibernate/hibernate-orm.git -b master -startdate 2007-12-07 -d s2550709
 
+srun ./clone-project-run-arcan.sh -p pgjdbc -u https://github.com/pgjdbc/pgjdbc.git -b master -startdate 2001-05-16 -d s2550709
 srun ./clone-project-run-arcan.sh -p roboelectric -u https://github.com/robolectric/robolectric.git -b master -startdate 2015-01-06 -d s2550709
 srun ./clone-project-run-arcan.sh -p sonarlint-intellij -u https://github.com/SonarSource/sonarlint-intellij.git -b master -d s2550709
 srun ./clone-project-run-arcan.sh -p swagger-core -u https://github.com/swagger-api/swagger-core.git -b master -d s2550709

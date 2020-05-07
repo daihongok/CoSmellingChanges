@@ -5,7 +5,7 @@
 
 # Constants
 ASTRACKER_JAR="astracker.jar"
-PROJECT="xerces2-j"
+PROJECT="swagger-core"
 DATA_FOLDER="s2550709"
 INPUT_DATA="/data/${DATA_FOLDER}/arcanoutput/${PROJECT}"
 OUTPUT_DIR="/data/${DATA_FOLDER}/astracker_output"
