@@ -97,4 +97,4 @@ parse_args(){
 parse_args $@
 clone_and_analyze
 
-read -p "Press any key to continue" x
+#read -p "Press any key to continue" x
