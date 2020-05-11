@@ -189,13 +189,13 @@ public class CoChangeDetector {
 
             while (parentWalk.next()) {
                 String path = parentWalk.getPathString();
-                if (path.endsWith(".java")) {
+                if (path.endsWith(".java") && pathInSources(path)) {
                     files.add(path);
                 }
             }
             while (childWalk.next()) {
                 String path = childWalk.getPathString();
-                if (path.endsWith(".java")) {
+                if (path.endsWith(".java") && pathInSources(path)) {
                     files.add(path);
                 }
             }
@@ -205,6 +205,12 @@ public class CoChangeDetector {
         }
 
         return files;
+    }
+
+    private static boolean pathInSources(String path){
+        return SourcesManager.getListOfDirectories().stream().anyMatch(
+                source -> path.startsWith(source)
+        );
     }
 
     private int getCommitDistance(ObjectId commitA, ObjectId commitB){
