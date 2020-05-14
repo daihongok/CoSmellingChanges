@@ -55,6 +55,8 @@ public class FileOperations {
             if (matcher.find()) {
                 cache.put(file.getPath(), matcher.group(1));
                 return matcher.group(1);
+            }else{
+                cache.put(file.getPath(), "");
             }
 
         } catch (Exception e) {
