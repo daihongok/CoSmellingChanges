@@ -38,6 +38,10 @@ public class CSVExporter {
             headerLine.append("startdate");
             headerLine.append(CSV_SEPARATOR);
             headerLine.append("enddate");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("package1");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("package2");
             bw.write(headerLine.toString());
             bw.newLine();
             // Write data records
@@ -53,6 +57,10 @@ public class CSVExporter {
                 oneLine.append(coChange.getStartDate());
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(coChange.getEndDate());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(coChange.getPackage1());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(coChange.getPackage2());
                 bw.write(oneLine.toString());
                 bw.newLine();
             }

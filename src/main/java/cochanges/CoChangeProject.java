@@ -10,15 +10,25 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CoChangeProject {
     private Git git;
     private Repository repository;
+
+    private List<String> files = null;
+
+    private String projectLocation;
 
     private CoChangeProject() {
 
@@ -38,7 +48,8 @@ public class CoChangeProject {
 
     private void InitializeProject(String projectDir, String projectName, String projectOwner, String projectBranch) {
         try {
-            File projectPath = new File(projectDir + "/" + projectName);
+            projectLocation = projectDir + "/" + projectName;
+            File projectPath = new File(projectLocation);
 
             if (projectPath.exists()) {
                 FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
@@ -154,4 +165,23 @@ public class CoChangeProject {
     }
 
 
+    public String getProjectLocation() {
+        return projectLocation;
+    }
+
+    public List<String> getProjectFiles() {
+        if (files == null) {
+            files = new ArrayList<String>();
+
+            try (Stream<Path> walk = Files.walk(Paths.get(projectLocation))) {
+
+                files = walk.filter(Files::isRegularFile)
+                        .map(Path::toString).collect(Collectors.toList());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return files;
+    }
 }

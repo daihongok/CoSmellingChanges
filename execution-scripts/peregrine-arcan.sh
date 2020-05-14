@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=testng-arcan-1
+#SBATCH --job-name=guava-arcan-3
 #SBATCH --mail-type=ALL
 #SBATCH --time=3-12:00
-#SBATCH --mail-user=r.m.kruizinga@student.rug.nl
+#SBATCH --mail-user=r.j.scheedler@student.rug.nl
 #SBATCH --output=job-%j.log
 #SBATCH --partition=regular
 #SBATCH --nodes=1
@@ -13,6 +13,4 @@
 module load Java/11.0.2
 module load git/2.13.2-foss-2016a
 
-srun ./clone-project-run-arcan.sh -p testng -u https://github.com/cbeust/testng.git -b master -d s2527227
-
-
+srun ./clone-project-run-arcan.sh -p guava -u https://github.com/google/guava.git -b master -startdate 2011-05-11 -d s2550709
