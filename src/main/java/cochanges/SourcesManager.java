@@ -34,7 +34,7 @@ public class SourcesManager {
 
             } catch (IOException | NullPointerException e) {
                 directories = new ArrayList<>() {};
-                directories.add("/");
+                directories.add("");
             }
         }
         // Return the override value if it exists. Otherwise read it from the resource file.
