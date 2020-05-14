@@ -112,8 +112,8 @@ public class ConfigurationManager {
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.
      */
-    static int getMaxDaysBetweenCoChanges() {
-        return Integer.parseInt(getProperty("CoChanges.MaxDaysBetweenCommits"));
+    static int getMaxHoursBetweenCommits() {
+        return Integer.parseInt(getProperty("CoChanges.MaxHoursBetweenCommits"));
     }
 
     /**

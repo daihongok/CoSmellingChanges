@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=run_astracker-swagger-core
+#SBATCH --job-name=run_astracker-sonar
 #SBATCH --mail-type=ALL
 #SBATCH --time=1-12:00
 #SBATCH --mail-user=r.m.kruizinga@student.rug.nl

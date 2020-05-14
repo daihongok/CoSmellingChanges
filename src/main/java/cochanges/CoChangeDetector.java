@@ -89,8 +89,8 @@ public class CoChangeDetector {
 
                     // Check if these changes fall within the allowed interval
                     long diffInMillies = Math.abs(date2.getTime() - date1.getTime());
-                    long daysDiff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-                    if (daysDiff <= ConfigurationManager.getMaxDaysBetweenCoChanges() && getCommitDistance(current1, current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
+                    long hoursDiff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                    if (hoursDiff <= ConfigurationManager.getMaxHoursBetweenCommits() && getCommitDistance(current1, current2) <= ConfigurationManager.getMaxCommitsBetweenCommits()) {
                         // Make sure item1 always happened earlier than item2 for efficient duplicate filtering.
                         if (date2.getTime() > date1.getTime()) {
                             addUniqueTuple(relatedChanges, new Tuple<>(current1, current2));

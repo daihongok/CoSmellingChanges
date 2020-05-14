@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=druid-arcan-1
+#SBATCH --job-name=testng-arcan-1
 #SBATCH --mail-type=ALL
 #SBATCH --time=3-12:00
-#SBATCH --mail-user=r.j.scheedler@student.rug.nl
+#SBATCH --mail-user=r.m.kruizinga@student.rug.nl
 #SBATCH --output=job-%j.log
 #SBATCH --partition=regular
 #SBATCH --nodes=1
@@ -13,4 +13,6 @@
 module load Java/11.0.2
 module load git/2.13.2-foss-2016a
 
-srun ./clone-project-run-arcan.sh -p druid -u https://github.com/apache/druid.git -b master -startdate 2013-01-02 -d s2550709
+srun ./clone-project-run-arcan.sh -p testng -u https://github.com/cbeust/testng.git -b master -d s2527227
+
+

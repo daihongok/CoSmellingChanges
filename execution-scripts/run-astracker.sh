@@ -5,8 +5,8 @@
 
 # Constants
 ASTRACKER_JAR="astracker.jar"
-PROJECT="swagger-core"
-DATA_FOLDER="s2550709"
+PROJECT="Sonarlint-IntelliJ"
+DATA_FOLDER="s2527227"
 INPUT_DATA="/data/${DATA_FOLDER}/arcanoutput/${PROJECT}"
 OUTPUT_DIR="/data/${DATA_FOLDER}/astracker_output"
 SOURCE_CODE_DIR="/data/${DATA_FOLDER}/projects/${PROJECT}"
