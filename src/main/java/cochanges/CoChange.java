@@ -1,6 +1,7 @@
 package cochanges;
 
 import org.eclipse.jgit.revwalk.RevCommit;
+import utility.FileOperations;
 import utility.Tuple;
 
 import java.io.File;
@@ -13,6 +14,9 @@ public class CoChange {
     private File file1;
     private File file2;
     private ArrayList<Tuple<RevCommit>> coVersions;
+
+    private String package1;
+    private String package2;
 
     CoChange(String file1, String file2, ArrayList<Tuple<RevCommit>> coVersions) {
         this.file1 = new File(file1);
@@ -89,5 +93,18 @@ public class CoChange {
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String strDate = dateFormat.format(maxDate);
         return strDate;
+    }
+
+    public void findPackages(CoChangeProject project) {
+        package1 = FileOperations.GetPackageFromFile(file1.getName(), project);
+        package2 = FileOperations.GetPackageFromFile(file2.getName(), project);
+    }
+
+    public String getPackage1() {
+        return package1;
+    }
+
+    public String getPackage2() {
+        return package2;
     }
 }
