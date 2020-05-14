@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Provides an interface to persist co-change data in to files.
@@ -20,6 +21,7 @@ public class CSVExporter {
      * Separator used in between values on one line in the CSV file.
      */
     private static final String CSV_SEPARATOR = ",";
+    private static HashMap<String,Long> cache = new HashMap<>();
     /**
      * Stores the list of co-changes in the given file.
      * @param filePath CSV file to store data in
@@ -125,13 +127,20 @@ public class CSVExporter {
     }
 
     private static long getFileSize(String filepath){
+        if(cache.containsKey(filepath)){
+            return cache.get(filepath);
+        }
         Path path = Paths.get("projects/" + ConfigurationManager.getProjectName() + "/" + filepath);
         try {
-            return Files.lines(path, Charset.forName("windows-1251")).count();
+            Long fileCount = Files.lines(path, Charset.forName("windows-1251")).count();
+            cache.put(filepath, fileCount);
+            return fileCount;
         } catch (IOException e) {
+            cache.put(filepath, -1L);
             return -1;
         } catch (UncheckedIOException e) {
             System.out.println("File size of this file could not be calculated:" + filepath);
+            cache.put(filepath, -1L);
             return -1;
         }
     }
