@@ -10,17 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CoChange {
-    private File file1;
-    private File file2;
+public class CoChange extends FilePair {
+
     private ArrayList<Tuple<RevCommit>> coVersions;
 
-    private String package1;
-    private String package2;
-
     CoChange(String file1, String file2, ArrayList<Tuple<RevCommit>> coVersions) {
-        this.file1 = new File(file1);
-        this.file2 = new File(file2);
+        super(file1,file2);
         this.coVersions = coVersions;
     }
 
@@ -32,13 +27,7 @@ public class CoChange {
                             .reduce("",(curr,next) -> curr + next);
     }
 
-    public String getFile1() {
-        return file1.getName();
-    }
 
-    public String getFile2() {
-        return file2.getName();
-    }
 
     public ArrayList<Tuple<RevCommit>> getCoVersions() {
         return coVersions;
@@ -95,16 +84,5 @@ public class CoChange {
         return strDate;
     }
 
-    public void findPackages(CoChangeProject project) {
-        package1 = FileOperations.GetPackageFromFile(file1.getName(), project);
-        package2 = FileOperations.GetPackageFromFile(file2.getName(), project);
-    }
 
-    public String getPackage1() {
-        return package1;
-    }
-
-    public String getPackage2() {
-        return package2;
-    }
 }

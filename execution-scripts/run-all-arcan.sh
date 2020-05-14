@@ -24,10 +24,12 @@ srun ./clone-project-run-arcan.sh -p jenkins -u https://github.com/jenkinsci/jen
 srun ./clone-project-run-arcan.sh -p junit5 -u https://github.com/junit-team/junit5.git -b master -startdate 2015-10-31 -d s2550709
 
 srun ./clone-project-run-arcan.sh -p lucene-solr -u https://github.com/apache/lucene-solr.git -b master -startdate 2016-07-12 -d s2550709
+srun ./clone-project-run-arcan.sh -p mybatis-3 -u https://github.com/mybatis/mybatis-3.git -b master -startdate 2010-05-10 -d s2550709
 srun ./clone-project-run-arcan.sh -p pdfbox -u https://github.com/apache/pdfbox.git -b trunk -startdate 2011-10-13 -d s2550709
 srun ./clone-project-run-arcan.sh -p poi -u https://github.com/apache/poi.git -b trunk -startdate 2011-05-20 -d s2550709
 srun ./clone-project-run-arcan.sh -p pgjdbc -u https://github.com/pgjdbc/pgjdbc.git -b master -startdate 2001-05-16 -d s2550709
 srun ./clone-project-run-arcan.sh -p roboelectric -u https://github.com/robolectric/robolectric.git -b master -startdate 2015-01-06 -d s2550709
+srun ./clone-project-run-arcan.sh -p RxJava -u https://github.com/ReactiveX/RxJava.git -b 3.x -startdate 2012-04-10 -d s2550709
 srun ./clone-project-run-arcan.sh -p sonarlint-intellij -u https://github.com/SonarSource/sonarlint-intellij.git -b master -d s2550709
 srun ./clone-project-run-arcan.sh -p swagger-core -u https://github.com/swagger-api/swagger-core.git -b master -d s2550709
 srun ./clone-project-run-arcan.sh -p testng -u https://github.com/cbeust/testng.git -b master -d s2550709

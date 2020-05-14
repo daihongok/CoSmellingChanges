@@ -62,8 +62,9 @@ public class Main {
          */
         // 1) total amount of pairs
         HashSet<String> distinctFiles = ccd.getChangedFiles();
-        ArrayList<Tuple<String>> tuples = ListOperations.getUniquePairs(distinctFiles);
-        CSVExporter.storeFilePairs("resources/"+ConfigurationManager.getProjectName()+"/file_pairs.csv",tuples);
+        ArrayList<FilePair> filePairs = ListOperations.getUniquePairs(distinctFiles).stream().map(pair -> new FilePair(pair.getItem1(), pair.getItem2())).collect(Collectors.toCollection(ArrayList::new));
+        filePairs.forEach(f -> f.findPackages(project));
+        CSVExporter.storeFilePairs("resources/"+ConfigurationManager.getProjectName()+"/file_pairs.csv",filePairs);
         /*
         logger.info("total pairs: " + tuples.size());
         // 2) co-changed pairs
