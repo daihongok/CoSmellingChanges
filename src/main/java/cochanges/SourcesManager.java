@@ -32,11 +32,9 @@ public class SourcesManager {
                 String includes = properties.getProperty("sources.include");
                 directories = Arrays.asList(includes.split(":"));
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                directories = new ArrayList<String>() {
-                };
-                directories.add("/");
+            } catch (IOException | NullPointerException e) {
+                directories = new ArrayList<>() {};
+                directories.add("");
             }
         }
         // Return the override value if it exists. Otherwise read it from the resource file.
