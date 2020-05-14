@@ -2,9 +2,11 @@ package export;
 
 import cochanges.CoChange;
 import cochanges.ConfigurationManager;
+import cochanges.FilePair;
 import utility.Tuple;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,7 +79,7 @@ public class CSVExporter {
      * @param filePath csv file to store the pairs in
      * @param pairs file pairs to store
      */
-    public static void storeFilePairs(String filePath, ArrayList<Tuple<String>> pairs) {
+    public static void storeFilePairs(String filePath, ArrayList<FilePair> pairs) {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
@@ -88,21 +90,29 @@ public class CSVExporter {
                     CSV_SEPARATOR +
                     "file1Size"+
                     CSV_SEPARATOR +
-                    "file2Size";
+                    "file2Size" +
+                    CSV_SEPARATOR +
+                    "package1" +
+                    CSV_SEPARATOR +
+                    "package2";
             bw.write(headerLine);
             bw.newLine();
             // Write data records
-            for (Tuple<String> nonCoChange : pairs)
+            for (FilePair nonCoChange : pairs)
             {
-                long sizeOne = getFileSize(nonCoChange.getItem1());
-                long sizeTwo = getFileSize(nonCoChange.getItem2());
-                String oneLine = nonCoChange.getItem1() +
+                long sizeOne = getFileSize(nonCoChange.getFile1());
+                long sizeTwo = getFileSize(nonCoChange.getFile2());
+                String oneLine = nonCoChange.getFile1() +
                     CSV_SEPARATOR +
-                    nonCoChange.getItem2()+
+                    nonCoChange.getFile2()+
                     CSV_SEPARATOR +
                     sizeOne +
                     CSV_SEPARATOR +
-                    sizeTwo;
+                    sizeTwo +
+                    CSV_SEPARATOR +
+                    nonCoChange.getPackage1() +
+                    CSV_SEPARATOR +
+                    nonCoChange.getPackage2();
                 bw.write(oneLine);
                 bw.newLine();
             }
@@ -117,8 +127,11 @@ public class CSVExporter {
     private static long getFileSize(String filepath){
         Path path = Paths.get("projects/" + ConfigurationManager.getProjectName() + "/" + filepath);
         try {
-            return Files.lines(path).count();
+            return Files.lines(path, Charset.forName("windows-1251")).count();
         } catch (IOException e) {
+            return -1;
+        } catch (UncheckedIOException e) {
+            System.out.println("File size of this file could not be calculated:" + filepath);
             return -1;
         }
     }
