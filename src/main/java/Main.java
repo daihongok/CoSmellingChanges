@@ -11,6 +11,7 @@ import smells.SmellImporter;
 import utility.ListOperations;
 import utility.Tuple;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,8 +37,14 @@ public class Main {
         // Post processing of co-changes.
         // Attach begin and end timestamps to each co-change.
 
+        File directory = new File("resources/"+ConfigurationManager.getProjectName());
+        if (! directory.exists()){
+            directory.mkdir();
+            // If you require it to make the entire directory path including parents,
+            // use directory.mkdirs(); here instead.
+        }
         // Write coChanges to CSV file
-        CSVExporter.storeCoChanges("resources/cochanges.csv",coChanges);
+        CSVExporter.storeCoChanges("resources/"+ConfigurationManager.getProjectName()+"/cochanges.csv",coChanges);
         GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
             logger.debug(c.toString());
@@ -56,7 +63,7 @@ public class Main {
         // 1) total amount of pairs
         HashSet<String> distinctFiles = ccd.getChangedFiles();
         ArrayList<Tuple<String>> tuples = ListOperations.getUniquePairs(distinctFiles);
-        CSVExporter.storeFilePairs("resources/file_pairs.csv",tuples);
+        CSVExporter.storeFilePairs("resources/"+ConfigurationManager.getProjectName()+"/file_pairs.csv",tuples);
         /*
         logger.info("total pairs: " + tuples.size());
         // 2) co-changed pairs
