@@ -26,11 +26,19 @@ public class FileOperations {
     public static String GetPackageFromFile(String file, CoChangeProject project) {
         // Locate project folder
         File projectDir = new File(project.getProjectLocation());
+
+
+        if(cache.containsKey(file)){
+            return cache.get(file);
+        }
         // Locate our file in the project folder
         Optional<String> matchingFile = project.getProjectFiles().stream().filter(f -> f.endsWith(file)).findFirst();
         if (matchingFile.isPresent()) {
-            return ExtractPackage(new File(matchingFile.get()));
+            String packagePath = ExtractPackage(new File(matchingFile.get()));
+            cache.put(file, packagePath);
+            return packagePath;
         } else {
+            cache.put(file, "");
             return "";
         }
     }
@@ -39,9 +47,6 @@ public class FileOperations {
         BufferedReader reader;
         StringBuilder contents;
         try {
-            if(cache.containsKey(file.getPath())){
-                return cache.get(file.getPath());
-            }
             reader = new BufferedReader(new FileReader(file));
             contents = new StringBuilder();
             while (reader.ready()) {
@@ -53,10 +58,7 @@ public class FileOperations {
             Pattern pattern = Pattern.compile("package\\s+([\\w.]+);", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(stringContents);
             if (matcher.find()) {
-                cache.put(file.getPath(), matcher.group(1));
                 return matcher.group(1);
-            }else{
-                cache.put(file.getPath(), "");
             }
 
         } catch (Exception e) {
