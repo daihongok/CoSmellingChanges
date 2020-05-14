@@ -45,7 +45,7 @@ public class Main {
         }
         // Write coChanges to CSV file
         CSVExporter.storeCoChanges("resources/"+ConfigurationManager.getProjectName()+"/cochanges.csv",coChanges);
-        GraphBuilder.BuildAndPersist(coChanges);
+        // GraphBuilder.BuildAndPersist(coChanges);
         for (CoChange c: coChanges) {
             logger.debug(c.toString());
         }

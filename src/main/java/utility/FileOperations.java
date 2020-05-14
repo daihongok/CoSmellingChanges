@@ -1,11 +1,13 @@
 package utility;
 
 import cochanges.CoChangeProject;
+import org.apache.commons.collections.map.HashedMap;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +16,7 @@ import java.util.regex.Pattern;
  * Contains utility operations on files.
  */
 public class FileOperations {
+    private static HashMap<String, String> cache = new HashMap<>();
     /**
      * Reads the package of a java file and returns it.
      * @param file
@@ -36,6 +39,9 @@ public class FileOperations {
         BufferedReader reader;
         StringBuilder contents;
         try {
+            if(cache.containsKey(file.getPath())){
+                return cache.get(file.getPath());
+            }
             reader = new BufferedReader(new FileReader(file));
             contents = new StringBuilder();
             while (reader.ready()) {
@@ -47,6 +53,7 @@ public class FileOperations {
             Pattern pattern = Pattern.compile("package\\s+([\\w.]+);", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(stringContents);
             if (matcher.find()) {
+                cache.put(file.getPath(), matcher.group(1));
                 return matcher.group(1);
             }
 
