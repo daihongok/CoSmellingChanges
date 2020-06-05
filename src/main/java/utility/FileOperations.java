@@ -21,9 +21,6 @@ public class FileOperations {
      */
     public static String GetPackageFromFile(String file, CoChangeProject project) {
         // Locate project folder
-        File projectDir = new File(project.getProjectLocation());
-
-
         if(cache.containsKey(file)){
             return cache.get(file);
         }

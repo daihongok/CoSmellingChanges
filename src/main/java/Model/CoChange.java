@@ -38,23 +38,7 @@ public class CoChange extends FilePair {
      */
     public String getStartDate() {
         Date minDate = new Date(Long.MAX_VALUE);
-
-        for (Tuple<RevCommit> c : coVersions) {
-            Date date1 = c.getItem1().getCommitterIdent().getWhen();
-            Date date2 = c.getItem2().getCommitterIdent().getWhen();
-            long diff1 = minDate.getTime() - date1.getTime();
-            if (diff1 > 0) { // date1 < minDate
-                minDate = date1;
-            }
-
-            long diff2 = minDate.getTime() - date2.getTime();
-            if (diff2 > 0) { // date2 < minDate
-                minDate = date1;
-            }
-        }
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String strDate = dateFormat.format(minDate);
-        return strDate;
+        return getSpecificDate(minDate, TARGETDATE.MIN);
     }
 
     /**
@@ -63,24 +47,44 @@ public class CoChange extends FilePair {
      */
     public String getEndDate() {
         Date maxDate = new Date(0);
+        return getSpecificDate(maxDate, TARGETDATE.MAX);
+    }
 
+    private String getSpecificDate(Date comparison, TARGETDATE targetdate){
         for (Tuple<RevCommit> c : coVersions) {
             Date date1 = c.getItem1().getCommitterIdent().getWhen();
             Date date2 = c.getItem2().getCommitterIdent().getWhen();
-            long diff1 = date1.getTime() - maxDate.getTime();
 
-            if (diff1 > 0) { // date1 < minDate
-                maxDate = date1;
+            long diff1 = 0;
+            long diff2 = 0;
+
+            switch (targetdate){
+                case MAX:
+                    diff1 = date1.getTime() - comparison.getTime();
+                    diff2 = date2.getTime() - comparison.getTime();
+                    break;
+                case MIN:
+                    diff1 = comparison.getTime() - date1.getTime();
+                    diff2 = comparison.getTime() - date2.getTime();
+                    break;
             }
 
-            long diff2 = date2.getTime() - maxDate.getTime();
+            if (diff1 > 0) { // date1 < minDate
+                comparison = date1;
+            }
+
             if (diff2 > 0) { // date2 < minDate
-                maxDate = date2;
+                comparison = date2;
             }
         }
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String strDate = dateFormat.format(maxDate);
+        String strDate = dateFormat.format(comparison);
         return strDate;
+    }
+
+    private enum TARGETDATE {
+        MIN,
+        MAX
     }
 
 

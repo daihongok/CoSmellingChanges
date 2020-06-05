@@ -18,7 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,47 +91,6 @@ public class CoChangeProject {
         return walk;
     }
 
-    public HashSet<String> getDistinctFiles(RevWalk commitList, int commitsToAnalyze) {
-        HashSet<String> distinctFiles = new HashSet<>();
-        int commitsAnalyzed = 0;
-
-        for (RevCommit commit : commitList) {
-            if (commitsAnalyzed == commitsToAnalyze) {
-                break;
-            }
-            HashSet<String> filesAffected = getAffectedFilesOfCommit(commit);
-            distinctFiles.addAll(filesAffected);
-
-            commitsAnalyzed++;
-        }
-
-        return distinctFiles;
-    }
-
-    /**
-     * Gets a set of files affected (changed) by this commit.
-     * @param commit RevCommit
-     * @return Distinct affected files.
-     */
-    private HashSet<String> getAffectedFilesOfCommit(RevCommit commit) {
-        HashSet<String> filesAffected = new HashSet<>();
-        TreeWalk commitTreeWalk = new TreeWalk(repository);
-        commitTreeWalk.setRecursive(true);
-        try {
-            commitTreeWalk.reset(commit.getTree());
-
-            while (commitTreeWalk.next()) {
-                String path = commitTreeWalk.getPathString();
-                if (path.endsWith(".java")) {
-                    filesAffected.add(path);
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return filesAffected;
-    }
 
     public void printProjectAnalysisInfo() {
         System.out.println("--- Info on analysis ---");
@@ -172,7 +130,7 @@ public class CoChangeProject {
 
     public List<String> getProjectFiles() {
         if (files == null) {
-            files = new ArrayList<String>();
+            files = new ArrayList<>();
 
             try (Stream<Path> walk = Files.walk(Paths.get(projectLocation))) {
 

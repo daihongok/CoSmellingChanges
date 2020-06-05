@@ -3,18 +3,15 @@ package cochanges;
 import Config.ConfigurationManager;
 import Model.CoChange;
 import Model.FileChange;
-import com.google.gson.Gson;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import utility.SourcesManager;
 import utility.Tuple;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -163,7 +160,6 @@ public class CoChangeDetector {
                 cd.calculate(files, repository, directParent, currentCommit);
 
                 commitsAnalyzed++;
-                //System.out.println(commitsAnalyzed);
             }
         }
         catch (IOException e) {
@@ -232,9 +228,7 @@ public class CoChangeDetector {
             index++;
         }
 
-        //System.out.println(indexA + "," + indexB);
         if(aFound && bFound) {
-            //System.out.println(Math.abs(indexA - indexB) - 1);
             return Math.abs(indexA - indexB) - 1;
         }else{
             return Integer.MAX_VALUE;
