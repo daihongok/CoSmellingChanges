@@ -1,15 +1,14 @@
 
+import Config.ConfigurationManager;
+import Model.CoChange;
+import Model.FilePair;
 import cochanges.*;
-import export.CSVExporter;
-import graph.GraphBuilder;
+import utility.CSVExporter;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import smells.Smell;
-import smells.SmellImporter;
 import utility.ListOperations;
-import utility.Tuple;
 
 import java.io.File;
 import java.util.*;
@@ -37,7 +36,7 @@ public class Main {
         // Post processing of co-changes.
         // Attach begin and end timestamps to each co-change.
 
-        File directory = new File("resources/"+ConfigurationManager.getProjectName());
+        File directory = new File("resources/"+ ConfigurationManager.getProjectName());
         if (! directory.exists()){
             directory.mkdir();
             // If you require it to make the entire directory path including parents,

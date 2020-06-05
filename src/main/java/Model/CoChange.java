@@ -1,10 +1,9 @@
-package cochanges;
+package Model;
 
+import Model.FilePair;
 import org.eclipse.jgit.revwalk.RevCommit;
-import utility.FileOperations;
 import utility.Tuple;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class CoChange extends FilePair {
 
     private ArrayList<Tuple<RevCommit>> coVersions;
 
-    CoChange(String file1, String file2, ArrayList<Tuple<RevCommit>> coVersions) {
+    public CoChange(String file1, String file2, ArrayList<Tuple<RevCommit>> coVersions) {
         super(file1,file2);
         this.coVersions = coVersions;
     }

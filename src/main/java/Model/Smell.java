@@ -1,4 +1,4 @@
-package smells;
+package Model;
 
 import java.util.ArrayList;
 

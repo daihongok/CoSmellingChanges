@@ -1,20 +1,18 @@
 package cochanges;
 
+import Config.ConfigurationManager;
+import Model.CoChange;
+import Model.FileChange;
 import com.google.gson.Gson;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import utility.Tuple;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -243,40 +241,8 @@ public class CoChangeDetector {
         }
     }
 
-    /**
-     * Serializes co-changes to JSON and stores them in the given file.
-     * @param filePath File to store JSON data in.
-     */
-    public void storeCoChanges(CoChangeExport[] coChanges, String filePath) {
-        try {
-            File coChangeFile = new File(filePath);
-            coChangeFile.createNewFile();
-            Gson gson = new Gson();
-            Files.write(Paths.get(filePath), gson.toJson(coChanges).getBytes());
-        } catch (IOException e) {
-            System.out.println("An error occurred while writing co-changes to a file.");
-            e.printStackTrace();
-        }
-    }
 
-    /**
-     * Parses the JSON contents of the file to an array of cochange exports.
-     * @param filePath File to read.
-     * @return Array of CoChangeExports
-     */
-    public CoChangeExport[] readCoChangesFromFile(String filePath) {
-        String content = "";
-        try
-        {
-            content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        Gson gson = new Gson();
-        return gson.fromJson(content,CoChangeExport[].class);
-    }
+
 
     public HashSet<String> getChangedFiles() {
         return changedFiles;

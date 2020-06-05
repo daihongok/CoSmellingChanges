@@ -1,4 +1,4 @@
-package cochanges;
+package Model;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 

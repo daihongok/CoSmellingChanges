@@ -1,9 +1,8 @@
-package export;
+package utility;
 
-import cochanges.CoChange;
-import cochanges.ConfigurationManager;
-import cochanges.FilePair;
-import utility.Tuple;
+import Model.CoChange;
+import Config.ConfigurationManager;
+import Model.FilePair;
 
 import java.io.*;
 import java.nio.charset.Charset;

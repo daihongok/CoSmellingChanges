@@ -1,5 +1,6 @@
-package cochanges;
+package Model;
 
+import cochanges.CoChangeProject;
 import utility.FileOperations;
 
 import java.io.File;

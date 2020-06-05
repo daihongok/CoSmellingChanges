@@ -1,6 +1,7 @@
-package smells;
+package utility;
 
 import com.google.gson.Gson;
+import Model.Smell;
 
 import java.io.BufferedReader;
 import java.io.IOException;

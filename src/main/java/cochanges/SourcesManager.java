@@ -1,5 +1,7 @@
 package cochanges;
 
+import Config.ConfigurationManager;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +28,7 @@ public class SourcesManager {
             try {
                 properties = new Properties();
 
-                InputStream input = new FileInputStream("execution-scripts/sourceproperties/"+ConfigurationManager.getProjectName()+"/sources.properties");
+                InputStream input = new FileInputStream("execution-scripts/sourceproperties/"+ ConfigurationManager.getProjectName()+"/sources.properties");
                 // load a properties file
                 properties.load(input);
                 String includes = properties.getProperty("sources.include");

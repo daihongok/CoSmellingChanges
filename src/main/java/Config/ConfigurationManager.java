@@ -1,4 +1,4 @@
-package cochanges;
+package Config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -105,14 +105,14 @@ public class ConfigurationManager {
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.
      */
-    static int getMaxCommitsBetweenCommits() {
+    public static int getMaxCommitsBetweenCommits() {
         return Integer.parseInt(getProperty("CoChanges.MaxCommitsBetweenCommits"));
     }
     /**
      * Gets the maximum amount of days between changes to still be marked as co-changing.
      * @return The number of days.
      */
-    static int getMaxHoursBetweenCommits() {
+    public static int getMaxHoursBetweenCommits() {
         return Integer.parseInt(getProperty("CoChanges.MaxHoursBetweenCommits"));
     }
 
@@ -128,7 +128,7 @@ public class ConfigurationManager {
      * Minimum amount of overlapping changes to count as co-changing.
      * @return Amount of overlapping changes.
      */
-    static int getCoChangeThreshold() {
+    public static int getCoChangeThreshold() {
         return Integer.parseInt(getProperty("CoChanges.Threshold"));
     }
 }
