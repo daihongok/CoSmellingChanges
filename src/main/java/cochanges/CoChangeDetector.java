@@ -8,7 +8,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import utility.SourcesManager;
+import Config.SourcesManager;
 import utility.Tuple;
 
 import java.io.IOException;
@@ -157,7 +157,7 @@ public class CoChangeDetector {
                 childWalk.reset(currentCommit.getTree());
 
                 HashSet<String> files = GetFiles(parentWalk, childWalk);
-                cd.calculate(files, repository, directParent, currentCommit);
+                cd.calculateFileChanges(files, repository, directParent, currentCommit);
 
                 commitsAnalyzed++;
             }

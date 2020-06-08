@@ -1,4 +1,4 @@
-package utility;
+package Config;
 
 import Config.ConfigurationManager;
 

@@ -46,7 +46,7 @@ public class ChangeDetector  {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    public void calculate(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
+    public void calculateFileChanges(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
         ObjectId parentCommitId = parentCommit.getId();
         ObjectId childCommitId = childCommit.getId();
 
