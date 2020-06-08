@@ -77,13 +77,11 @@ public class CSVExporter {
     }
 
     /**
-     * Exports a list of file combinations to a file.
-     * @param filePath csv file to store the pairs in
-     * @param pairs file pairs to store
+     * Creates the given file and adds the header row so afterwards we can just append content.
+     * @param filePath File to create and prepare for file pairs.
      */
-    public static void storeFilePairs(String filePath, ArrayList<FilePair> pairs) {
-        try
-        {
+    public static void createFileAndHeader(String filePath) {
+        try {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
             // Write header line
             String headerLine = "file1" +
@@ -99,6 +97,23 @@ public class CSVExporter {
                     "package2";
             bw.write(headerLine);
             bw.newLine();
+            bw.flush();
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Exports a list of file combinations to a file.
+     * @param filePath csv file to store the pairs in
+     * @param pairs file pairs to store
+     */
+    public static void storeFilePairs(String filePath, ArrayList<FilePair> pairs) {
+        try
+        {
+            FileWriter fw = new FileWriter(filePath,true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
             // Write data records
             for (FilePair nonCoChange : pairs)
             {

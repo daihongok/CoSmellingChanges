@@ -61,10 +61,25 @@ public class Main {
          * Info for chi^2 test
          */
         // 1) total amount of pairs
+        String exportFileName = "resources/"+ConfigurationManager.getProjectName()+"/file_pairs.csv";
+        // Start with removing out the export file
+        File toDelete = new File(exportFileName);
+        toDelete.delete();
+        // Create the file and the header row
+        CSVExporter.createFileAndHeader(exportFileName);
+
         HashSet<String> distinctFiles = ccd.getChangedFiles();
-        ArrayList<FilePair> filePairs = ListOperations.getUniquePairs(distinctFiles).stream().map(pair -> new FilePair(pair.getItem1(), pair.getItem2())).collect(Collectors.toCollection(ArrayList::new));
-        filePairs.forEach(f -> f.findPackages(project));
-        CSVExporter.storeFilePairs("resources/"+ConfigurationManager.getProjectName()+"/file_pairs.csv",filePairs);
+        ArrayList<Tuple<String>> uniquePairs = ListOperations.getUniquePairs(distinctFiles);
+        int BATCH_SIZE = 1000;
+        for (int i = 0; i < uniquePairs.size(); i+=BATCH_SIZE) {
+            // get current batch
+            ArrayList<Tuple<String>> batch = new ArrayList<>(uniquePairs.subList(i, Math.min(i+BATCH_SIZE,uniquePairs.size())));
+            ArrayList<FilePair> filePairs = batch.stream().map(pair -> new FilePair(pair.getItem1(), pair.getItem2())).collect(Collectors.toCollection(ArrayList::new));
+            filePairs.forEach(f -> f.findPackages(project));
+            CSVExporter.storeFilePairs(exportFileName,filePairs);
+        }
+
+
         /*
         logger.info("total pairs: " + tuples.size());
         // 2) co-changed pairs

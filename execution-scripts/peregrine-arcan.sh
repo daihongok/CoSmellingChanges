@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=arcan-rxjava-attempt1
+#SBATCH --job-name=arcan-argouml-attempt3
 #SBATCH --mail-type=ALL
-#SBATCH --time=3-12:00
+#SBATCH --time=2-12:00
 #SBATCH --mail-user=r.j.scheedler@student.rug.nl
 #SBATCH --output=job-%j.log
 #SBATCH --partition=regular
@@ -12,4 +12,4 @@
 
 module load Java/11.0.2
 
-srun ./clone-project-run-arcan.sh -p RxJava -u https://github.com/ReactiveX/RxJava.git -b 3.x -startdate 2012-04-10 -d s2550709
+srun ./clone-project-run-arcan.sh -p argouml -u https://github.com/argouml-tigris-org/argouml.git -b master -startdate 2004-09-17 -d s2550709

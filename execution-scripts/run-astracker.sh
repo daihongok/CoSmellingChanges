@@ -14,7 +14,7 @@ SOURCE_CODE_DIR="/data/${DATA_FOLDER}/projects/${PROJECT}"
 
 # Function for executing the astracker jar with the passed arguments.
 astracker(){
-    java -Xmx128g -jar ${ASTRACKER_JAR} $@
+    java -Xmx120g -jar ${ASTRACKER_JAR} $@
 }
 
 start_as_tracker_analysis() {

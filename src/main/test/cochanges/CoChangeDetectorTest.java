@@ -30,6 +30,12 @@ class CoChangeDetectorTest {
     }
 
     @Test
+    void validateThresholdFilterTest() {
+        // Increase threshold above 1
+        ConfigurationManager.OverrideProperty("CoChanges.Threshold","4");
+    }
+/*
+    @Test
     void CoChangeTest() {
         CoChangeProject project = CoChangeProject.CreateFromConfig();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
@@ -80,7 +86,7 @@ class CoChangeDetectorTest {
         }
 
     }
-
+*/
     @AfterAll
     static void AfterAll() {
         ConfigurationManager.RemoveOverriddenProperty("ProjectName");
