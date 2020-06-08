@@ -1,12 +1,17 @@
 package cochanges;
 
+import Config.ConfigurationManager;
+import Model.CoChange;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
+import utility.FileOperations;
 import utility.Tuple;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -40,7 +45,7 @@ class CoChangeDetectorTest {
         CoChangeProject project = CoChangeProject.CreateFromConfig();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
         CoChangeExport[] foundCoChanges = coChanges.stream().map(CoChangeExport::new).toArray(CoChangeExport[]::new);
-        CoChangeExport[] actualCoChanges = ccd.readCoChangesFromFile("resources/validation/full-project-test-1.json");
+        CoChangeExport[] actualCoChanges = CoChangeExport.readCoChangesFromFile("resources/validation/full-project-test-1.json");
         // First check if the pairs of both lists are identical
         Tuple[] foundFilePairs = Arrays.stream(foundCoChanges).map(fcc -> new Tuple(fcc.getFile1(),fcc.getFile2())).toArray(Tuple[]::new);
         Collection<Tuple> foundFilePairsCollection = new LinkedList<>(Arrays.asList(foundFilePairs));
@@ -92,6 +97,9 @@ class CoChangeDetectorTest {
         ConfigurationManager.RemoveOverriddenProperty("ProjectName");
         ConfigurationManager.RemoveOverriddenProperty("ProjectOwner");
     }
+
+
+
 
     /*
     * Generating new JSON file:

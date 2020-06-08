@@ -1,7 +1,6 @@
 package cochanges;
 
-import cochanges.ChangeDetector;
-import cochanges.ConfigurationManager;
+import Config.ConfigurationManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 

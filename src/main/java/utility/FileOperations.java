@@ -1,12 +1,8 @@
 package utility;
 
 import cochanges.CoChangeProject;
-import org.apache.commons.collections.map.HashedMap;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -25,9 +21,6 @@ public class FileOperations {
      */
     public static String GetPackageFromFile(String file, CoChangeProject project) {
         // Locate project folder
-        File projectDir = new File(project.getProjectLocation());
-
-
         if(cache.containsKey(file)){
             return cache.get(file);
         }
@@ -67,4 +60,5 @@ public class FileOperations {
         }
         return "";
     }
+
 }

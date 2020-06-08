@@ -8,7 +8,7 @@ public class ListOperations {
      * Gets all unique tuples (a,b) where a < b.
      * If (a,b) is present, (b,a) is not.
      * @param set Set of values to create pairs out of.
-     * @return A set of unique pairs.
+     * @return A list of unique pairs.
      */
     public static ArrayList<Tuple<String>> getUniquePairs(HashSet<String> set) {
         ArrayList<Tuple<String>> tuples = new ArrayList<>();
