@@ -25,6 +25,10 @@ public class CoChangeDetector {
 
     private HashSet<String> changedFiles;
 
+    public HashSet<String> getChangedFiles() {
+        return changedFiles;
+    }
+
     public CoChangeDetector(ArrayList<ObjectId> CommitsInOrder){
         commitsInOrder = CommitsInOrder;
         changedFiles = new HashSet<>();
@@ -152,10 +156,4 @@ public class CoChangeDetector {
         }
     }
 
-
-
-
-    public HashSet<String> getChangedFiles() {
-        return changedFiles;
-    }
 }
