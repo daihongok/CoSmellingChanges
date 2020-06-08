@@ -2,13 +2,14 @@ package cochanges;
 
 import Config.ConfigurationManager;
 import Model.CoChange;
+import Model.GitProject;
 import Model.FileChange;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import Config.SourcesManager;
+import utility.FileOperations;
 import utility.Tuple;
 
 import java.io.IOException;
@@ -24,17 +25,17 @@ public class CoChangeDetector {
 
     private HashSet<String> changedFiles;
 
-    public CoChangeDetector(){
-        commitsInOrder = new ArrayList<>();
+    public CoChangeDetector(ArrayList<ObjectId> CommitsInOrder){
+        commitsInOrder = CommitsInOrder;
+        changedFiles = new HashSet<>();
     }
 
-    private ArrayList<CoChange> findCoChanges(ChangeDetector cd) {
+    public ArrayList<CoChange> findCoChanges(ChangeDetector cd) {
         ArrayList<CoChange> coChanges = new ArrayList<>();
 
         // cd contains `changeHistory`, which is a map between files and versions.
         // Find files with overlapping versions.
         Map<String, FileChange> fileChanges = cd.getChangeHistory();
-        changedFiles = new HashSet<>();
         //Set to hashset
         changedFiles.addAll(fileChanges.keySet());
         // We want an ordered collection to avoid duplicate co-changes.
@@ -122,90 +123,6 @@ public class CoChangeDetector {
         }
     }
 
-    /**
-     * Calculates the co-changes for a project.
-     * @param project An initialized project used to get the git repo and commit walk.
-     * @return the co-changes.
-     */
-    public ArrayList<CoChange> getCoChanges(CoChangeProject project) {
-        ChangeDetector cd = new ChangeDetector();
-        try {
-            Repository repository = project.getRepository();
-            RevWalk walk = project.getWalk();
-
-            int commitsAnalyzed = 0;
-
-            for (RevCommit currentCommit : walk) {
-                // Stop when we hit the cap of commits to analyze.
-                if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
-                    break;
-                }
-                commitsInOrder.add(currentCommit.getId());
-
-                if (currentCommit.getParentCount() == 0) { // Last commit has no parent.
-                    continue;
-                }
-
-                var directParent = currentCommit.getParent(0);
-
-                TreeWalk parentWalk = new TreeWalk(repository);
-                parentWalk.setRecursive(true);
-                parentWalk.reset(directParent.getTree());
-
-                TreeWalk childWalk = new TreeWalk(repository);
-                childWalk.setRecursive(true);
-                childWalk.reset(currentCommit.getTree());
-
-                HashSet<String> files = GetFiles(parentWalk, childWalk);
-                cd.calculateFileChanges(files, repository, directParent, currentCommit);
-
-                commitsAnalyzed++;
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return findCoChanges(cd);
-    }
-
-    /**
-     * Helper method for finding the union of two file collections.
-     * @param parentWalk
-     * @param childWalk
-     * @return
-     */
-    private static HashSet<String> GetFiles(TreeWalk parentWalk, TreeWalk childWalk) {
-
-        HashSet<String> files = new HashSet<>();
-
-        try {
-
-            while (parentWalk.next()) {
-                String path = parentWalk.getPathString();
-                if (path.endsWith(".java") && pathInSources(path)) {
-                    files.add(path);
-                }
-            }
-            while (childWalk.next()) {
-                String path = childWalk.getPathString();
-                if (path.endsWith(".java") && pathInSources(path)) {
-                    files.add(path);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return files;
-    }
-
-    private static boolean pathInSources(String path){
-        return SourcesManager.getListOfDirectories().stream().anyMatch(
-                source -> path.startsWith(source)
-        );
-    }
 
     private int getCommitDistance(ObjectId commitA, ObjectId commitB){
         int indexA = 0, indexB = 0,index = 0;

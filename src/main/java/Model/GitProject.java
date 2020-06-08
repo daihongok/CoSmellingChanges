@@ -1,4 +1,4 @@
-package cochanges;
+package Model;
 
 import Config.ConfigurationManager;
 import org.eclipse.jgit.api.Git;
@@ -7,7 +7,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CoChangeProject {
+public class GitProject {
     private Git git;
     private Repository repository;
 
@@ -30,15 +29,15 @@ public class CoChangeProject {
 
     private String projectLocation;
 
-    private CoChangeProject() {
+    private GitProject() {
 
     }
     /**
      * Creates a co-change project based on the config settings.
      * @return The initialized project.
      */
-    public static CoChangeProject CreateFromConfig() {
-        CoChangeProject project = new CoChangeProject();
+    public static GitProject CreateFromConfig() {
+        GitProject project = new GitProject();
         project.InitializeProject(ConfigurationManager.getProjectsDirectory(),
                                     ConfigurationManager.getProjectName(),
                                     ConfigurationManager.getProjectOwner(),

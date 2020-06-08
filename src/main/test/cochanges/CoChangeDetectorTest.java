@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class CoChangeDetectorTest {
-    CoChangeDetector ccd = new CoChangeDetector();
+    //CoChangeDetector ccd = new CoChangeDetector();
 
     @BeforeAll
     static void BeforeAll() {
@@ -42,7 +42,7 @@ class CoChangeDetectorTest {
 /*
     @Test
     void CoChangeTest() {
-        CoChangeProject project = CoChangeProject.CreateFromConfig();
+        GitProject project = GitProject.CreateFromConfig();
         ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
         CoChangeExport[] foundCoChanges = coChanges.stream().map(CoChangeExport::new).toArray(CoChangeExport[]::new);
         CoChangeExport[] actualCoChanges = CoChangeExport.readCoChangesFromFile("resources/validation/full-project-test-1.json");

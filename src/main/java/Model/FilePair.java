@@ -1,6 +1,5 @@
 package Model;
 
-import cochanges.CoChangeProject;
 import utility.FileOperations;
 
 import java.io.File;
@@ -26,7 +25,7 @@ public class FilePair {
         return file2.getName();
     }
 
-    public void findPackages(CoChangeProject project) {
+    public void findPackages(GitProject project) {
         package1 = FileOperations.GetPackageFromFile(file1.getName(), project);
         package2 = FileOperations.GetPackageFromFile(file2.getName(), project);
     }

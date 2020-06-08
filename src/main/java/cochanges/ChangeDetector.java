@@ -1,6 +1,8 @@
 package cochanges;
 
+import Config.ConfigurationManager;
 import Model.FileChange;
+import Model.GitProject;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.Edit;
@@ -8,7 +10,10 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
+import utility.FileOperations;
 
 import java.io.IOException;
 import java.util.*;
@@ -46,7 +51,48 @@ public class ChangeDetector  {
         this.changeHistory = new HashMap<>(1000);
     }
 
-    public void calculateFileChanges(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
+    public ArrayList<ObjectId> InitialiseChangeHistory(GitProject project){
+        ArrayList<ObjectId> commitsInOrder = new ArrayList<>();
+        try {
+            Repository repository = project.getRepository();
+            RevWalk walk = project.getWalk();
+
+            int commitsAnalyzed = 0;
+
+            for (RevCommit currentCommit : walk) {
+                // Stop when we hit the cap of commits to analyze.
+                if (commitsAnalyzed == ConfigurationManager.getMaxAmountOfCommits()) {
+                    break;
+                }
+                commitsInOrder.add(currentCommit.getId());
+
+                if (currentCommit.getParentCount() == 0) { // Last commit has no parent.
+                    continue;
+                }
+
+                RevCommit directParent = currentCommit.getParent(0);
+
+                TreeWalk parentWalk = new TreeWalk(repository);
+                parentWalk.setRecursive(true);
+                parentWalk.reset(directParent.getTree());
+
+                TreeWalk childWalk = new TreeWalk(repository);
+                childWalk.setRecursive(true);
+                childWalk.reset(currentCommit.getTree());
+
+                HashSet<String> files = FileOperations.GetFileUnion(parentWalk, childWalk);
+                this.calculateFileChanges(files, repository, directParent, currentCommit);
+
+                commitsAnalyzed++;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return commitsInOrder;
+    }
+
+    private void calculateFileChanges(HashSet<String> files, Repository repo, RevCommit parentCommit, RevCommit childCommit) {
         ObjectId parentCommitId = parentCommit.getId();
         ObjectId childCommitId = childCommit.getId();
 

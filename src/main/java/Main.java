@@ -1,8 +1,10 @@
 
 import Config.ConfigurationManager;
 import Model.CoChange;
+import Model.GitProject;
 import Model.FilePair;
 import cochanges.*;
+import org.eclipse.jgit.lib.ObjectId;
 import utility.CSVExporter;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
@@ -24,18 +26,18 @@ public class Main {
         Git git;
         long startTime = 0;
 
-        CoChangeProject project = CoChangeProject.CreateFromConfig();
+        GitProject project = GitProject.CreateFromConfig();
         /*
          * Start timing the program.
          */
         startTime = System.currentTimeMillis();
 
-        CoChangeDetector ccd = new CoChangeDetector();
-        ArrayList<CoChange> coChanges = ccd.getCoChanges(project);
+        ChangeDetector cd = new ChangeDetector();
+        ArrayList<ObjectId> commitsInOrder = cd.InitialiseChangeHistory(project);
+        CoChangeDetector ccd = new CoChangeDetector(commitsInOrder);
+        ArrayList<CoChange> coChanges = ccd.findCoChanges(cd);
         coChanges.forEach(c -> c.findPackages(project));
         project.printProjectAnalysisInfo();
-        // Post processing of co-changes.
-        // Attach begin and end timestamps to each co-change.
 
         File directory = new File("resources/"+ ConfigurationManager.getProjectName());
         if (! directory.exists()){
