@@ -52,9 +52,11 @@ public class CoChange extends FilePair {
 
     private String getSpecificDate(Date comparison, TARGETDATE targetdate){
         for (Tuple<RevCommit> c : coVersions) {
+            // date1: date of commit of file A
+            // date2: date of commit of file B, which fuzzy overlaps with commit of A
             Date date1 = c.getItem1().getCommitterIdent().getWhen();
             Date date2 = c.getItem2().getCommitterIdent().getWhen();
-
+            // Every loop iteration, compare date1 and date2 to the running aggregate: comparison
             long diff1 = 0;
             long diff2 = 0;
 

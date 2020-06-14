@@ -108,15 +108,22 @@ public class ChangeDetector  {
                     case ADD:
                     case MODIFY:
                         fileChange = changeHistory.getOrDefault(key, new FileChange());
+                        if (fileChange.getLastPath() == null) { // First move, from newest location to an older one
+                            fileChange.setLastPath(key);
+                        }
                         fileChange.addCommit(childCommit);
                         changeHistory.put(key, fileChange);
                         break;
                     case RENAME:
                         // Remove old entry and store the changes under the new one.
-                        fileChange = changeHistory.getOrDefault(entry.getOldPath(), new FileChange());
+                        fileChange = changeHistory.getOrDefault(key, new FileChange());
+                        // Store the last path of this file to determine things like package
+                        if (fileChange.getLastPath() == null) { // First move, from newest location to an older one
+                            fileChange.setLastPath(key);
+                        }
                         fileChange.addCommit(childCommit);
-                        changeHistory.put(key, fileChange);
-                        changeHistory.remove(entry.getOldPath());
+                        changeHistory.put(entry.getOldPath(), fileChange);
+                        changeHistory.remove(key);
                         break;
                     default:
                         break;

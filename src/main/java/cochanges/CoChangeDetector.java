@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class CoChangeDetector {
 
@@ -41,9 +42,9 @@ public class CoChangeDetector {
         // Find files with overlapping versions.
         Map<String, FileChange> fileChanges = cd.getChangeHistory();
         //Set to hashset
-        changedFiles.addAll(fileChanges.keySet());
+        changedFiles.addAll(fileChanges.values().stream().map(FileChange::getLastPath).collect(Collectors.toList()));
         // We want an ordered collection to avoid duplicate co-changes.
-        String[] keys = changedFiles.toArray(new String[0]);
+        String[] keys = fileChanges.keySet().toArray(new String[0]);
 
         for (int i = 0; i < keys.length; i++) {
             ArrayList<RevCommit> fileChanges1 = fileChanges.get(keys[i]).getCommits();
@@ -61,7 +62,7 @@ public class CoChangeDetector {
                 // Apply the threshold to determine if these files are to be marked as co-changing.
                 if (intersection.size() >= ConfigurationManager.getCoChangeThreshold()) {
                     // Co-change found!
-                    coChanges.add(new CoChange(keys[i], keys[j], intersection));
+                    coChanges.add(new CoChange(fileChanges.get(keys[i]).getLastPath(), fileChanges.get(keys[j]).getLastPath(), intersection));
                 }
             }
         }
