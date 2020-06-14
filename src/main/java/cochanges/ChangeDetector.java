@@ -111,6 +111,13 @@ public class ChangeDetector  {
                         fileChange.addCommit(childCommit);
                         changeHistory.put(key, fileChange);
                         break;
+                    case RENAME:
+                        // Remove old entry and store the changes under the new one.
+                        fileChange = changeHistory.getOrDefault(entry.getOldPath(), new FileChange());
+                        fileChange.addCommit(childCommit);
+                        changeHistory.put(key, fileChange);
+                        changeHistory.remove(entry.getOldPath());
+                        break;
                     default:
                         break;
                 }
