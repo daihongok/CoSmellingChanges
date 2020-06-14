@@ -2,6 +2,7 @@ package utility;
 
 import Model.CoChange;
 import Config.ConfigurationManager;
+import Model.FileChange;
 import Model.FilePair;
 
 import java.io.*;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides an interface to persist co-change data in to files.
@@ -21,6 +23,15 @@ public class CSVExporter {
      */
     private static final String CSV_SEPARATOR = ",";
     private static HashMap<String,Long> cache = new HashMap<>();
+
+    /**
+     *
+     * @param filePath Location to csv file.
+     * @param changedFiles Paths of files that changed (path/file.java)
+     */
+    public static void storeChanges(String filePath, Map<String, FileChange> changedFiles) {
+
+    }
     /**
      * Stores the list of co-changes in the given file.
      * @param filePath CSV file to store data in
