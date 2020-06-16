@@ -43,6 +43,8 @@ public class Main {
         if (! directory.exists()){
             directory.mkdir();
         }
+        // Write changed files to CSV file
+        CSVExporter.storeChanges("resources/"+ConfigurationManager.getProjectName()+"/changes.csv",cd.getChangeHistory(), project);
         // Write coChanges to CSV file
         CSVExporter.storeCoChanges("resources/"+ConfigurationManager.getProjectName()+"/cochanges.csv",coChanges);
 

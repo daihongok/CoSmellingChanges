@@ -4,6 +4,8 @@ import Model.CoChange;
 import Config.ConfigurationManager;
 import Model.FileChange;
 import Model.FilePair;
+import Model.GitProject;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -11,8 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static utility.FileOperations.GetPackageFromFile;
 
 /**
  * Provides an interface to persist co-change data in to files.
@@ -25,12 +30,57 @@ public class CSVExporter {
     private static HashMap<String,Long> cache = new HashMap<>();
 
     /**
-     *
+     * Outputs csv with name:string, version:hash as string, first_change:bool
      * @param filePath Location to csv file.
      * @param changedFiles Paths of files that changed (path/file.java)
      */
-    public static void storeChanges(String filePath, Map<String, FileChange> changedFiles) {
+    public static void storeChanges(String filePath, Map<String, FileChange> changedFiles, GitProject project) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
+            // Write header line
+            StringBuffer headerLine = new StringBuffer();
+            headerLine.append("name");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("package");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("version");
+            headerLine.append(CSV_SEPARATOR);
+            headerLine.append("first_change");
+            bw.write(headerLine.toString());
+            bw.newLine();
 
+            // Key = earliest location of a file
+            for (String key : changedFiles.keySet()) {
+                FileChange file = changedFiles.get(key);
+                boolean last = false; // commits are in reverse order: last represents the first commit in time
+                int lastIndex = file.getCommits().size()-1;
+                int i = 0;
+                // Loop over the versions in which this file changed
+                for (RevCommit changedCommit : file.getCommits()) {
+                    if (i == lastIndex) {
+                        last = true;
+                    }
+                    StringBuffer oneLine = new StringBuffer();
+                    oneLine.append(file.getLastPath());
+                    oneLine.append(CSV_SEPARATOR);
+                    oneLine.append(GetPackageFromFile(Paths.get(file.getLastPath()).getFileName().toString(),project));
+                    oneLine.append(CSV_SEPARATOR);
+                    oneLine.append(changedCommit.getId().getName());
+                    oneLine.append(CSV_SEPARATOR);
+                    oneLine.append(last);
+                    bw.write(oneLine.toString());
+                    bw.newLine();
+
+
+                    i++;
+                }
+            }
+            bw.flush();
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     /**
      * Stores the list of co-changes in the given file.

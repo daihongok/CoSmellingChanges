@@ -38,7 +38,7 @@ public class ChangeDetector  {
      */
     private static final int RENAME_LIMIT = 500;
 
-    Map<String, FileChange> getChangeHistory() {
+    public Map<String, FileChange> getChangeHistory() {
         return changeHistory;
     }
 
