@@ -63,7 +63,7 @@ public class CSVExporter {
                     StringBuffer oneLine = new StringBuffer();
                     oneLine.append(file.getLastPath());
                     oneLine.append(CSV_SEPARATOR);
-                    oneLine.append(GetPackageFromFile(Paths.get(file.getLastPath()).getFileName().toString(),project));
+                    oneLine.append(GetPackageFromFile(Paths.get(file.getLastPath()).toString(),project));
                     oneLine.append(CSV_SEPARATOR);
                     oneLine.append(changedCommit.getId().getName());
                     oneLine.append(CSV_SEPARATOR);
