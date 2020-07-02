@@ -69,7 +69,7 @@ public class CoChangeDetector {
         return coChanges;
     }
 
-    private ArrayList<Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
+    public ArrayList<Tuple<RevCommit>> relatedChanges(ArrayList<RevCommit> changes1, ArrayList<RevCommit> changes2) {
         // Stores commits that changed within the overlapping interval.
         ArrayList<Tuple<RevCommit>> relatedChanges = new ArrayList<>();
 

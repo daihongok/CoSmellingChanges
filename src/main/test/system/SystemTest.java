@@ -49,7 +49,6 @@ class SystemTest extends TestDirectoryTest {
         ArrayList<FilePair> expectedCoChanges = CSVImporter.ImportCoChanges("resources/testing/cochanges.csv");
 
         // Validation
-        //
         var missingChanges = difference(expectedChanges, actualChanges);
         missingChanges.forEach(mc -> fail("Missing change in " + mc.getName() + "(package: " + mc.getPackage() + ") during commit: " + mc.getVersion()));
         var abundantChanges = difference(actualChanges, expectedChanges);

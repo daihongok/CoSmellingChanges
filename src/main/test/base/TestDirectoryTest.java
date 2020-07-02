@@ -12,7 +12,7 @@ public class TestDirectoryTest {
         ConfigurationManager.OverrideProperty("LastCommit","HEAD");
         ConfigurationManager.OverrideProperty("CoChanges.ConsiderCommitsOverTime","true");
         ConfigurationManager.OverrideProperty("CoChanges.MaxCommitsBetweenCommits","100");
-        ConfigurationManager.OverrideProperty("CoChanges.MaxDaysBetweenCommits","0");
+        ConfigurationManager.OverrideProperty("CoChanges.MaxHoursBetweenCommits","20");
         ConfigurationManager.OverrideProperty("CoChanges.MaxAmountOfCommits","100");
         ConfigurationManager.OverrideProperty("CoChanges.Threshold","1");
 
