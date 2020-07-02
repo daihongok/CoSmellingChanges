@@ -3,6 +3,7 @@ package Model;
 import utility.FileOperations;
 
 import java.io.File;
+import java.util.Objects;
 
 public class FilePair {
 
@@ -36,5 +37,21 @@ public class FilePair {
 
     public String getPackage2() {
         return package2;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilePair filePair = (FilePair) o;
+        return Objects.equals(file1, filePair.file1) &&
+                Objects.equals(file2, filePair.file2) &&
+                Objects.equals(package1, filePair.package1) &&
+                Objects.equals(package2, filePair.package2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(file1, file2, package1, package2);
     }
 }

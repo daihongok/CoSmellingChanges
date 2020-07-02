@@ -14,6 +14,7 @@ public class FileChange {
     public FileChange() {
         commits = new ArrayList<>();
     }
+
     public ArrayList<RevCommit> getCommits() {
         return commits;
     }

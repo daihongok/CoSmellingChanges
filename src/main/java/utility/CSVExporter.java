@@ -26,7 +26,7 @@ public class CSVExporter {
     /**
      * Separator used in between values on one line in the CSV file.
      */
-    private static final String CSV_SEPARATOR = ",";
+    static final String CSV_SEPARATOR = ",";
     private static HashMap<String,Long> cache = new HashMap<>();
 
     /**
