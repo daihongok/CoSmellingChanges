@@ -87,7 +87,7 @@ public class CSVExporter {
      * @param filePath CSV file to store data in
      * @param coChanges Co-changes to store
      */
-    public static void storeCoChanges(String filePath, ArrayList<CoChange> coChanges) {
+    public static void storeCoChanges(String projectName, String filePath, ArrayList<CoChange> coChanges) {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
@@ -112,9 +112,11 @@ public class CSVExporter {
             for (CoChange coChange : coChanges)
             {
                 StringBuffer oneLine = new StringBuffer();
-                oneLine.append(coChange.getFile1());
+                String path1 = "/" + projectName + "/" + coChange.getFile1Path();
+                oneLine.append(path1.replace("\\","/"));
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(coChange.getFile2());
+                String path2 = ("/" + projectName + "/" + coChange.getFile2Path());
+                oneLine.append(path2.replace("\\","/"));
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(coChange.getCoVersions().size());
                 oneLine.append(CSV_SEPARATOR);

@@ -26,6 +26,14 @@ public class FilePair {
         return file2.getName();
     }
 
+    public String getFile1Path() {
+        return file1.getPath();
+    }
+
+    public String getFile2Path() {
+        return file2.getPath();
+    }
+
     public void findPackages(GitProject project) {
         package1 = FileOperations.GetPackageFromFile(file1.getPath(), project);
         package2 = FileOperations.GetPackageFromFile(file2.getPath(), project);

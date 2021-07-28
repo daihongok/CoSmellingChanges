@@ -46,7 +46,7 @@ public class Main {
         // Write changed files to CSV file
         CSVExporter.storeChanges("resources/"+ConfigurationManager.getProjectName()+"/changes.csv",cd.getChangeHistory(), project);
         // Write coChanges to CSV file
-        CSVExporter.storeCoChanges("resources/"+ConfigurationManager.getProjectName()+"/cochanges.csv",coChanges);
+        CSVExporter.storeCoChanges(ConfigurationManager.getProjectName(),"resources/"+ConfigurationManager.getProjectName()+"/cochanges.csv",coChanges);
 
         /*
          * Finish timing and print result.
