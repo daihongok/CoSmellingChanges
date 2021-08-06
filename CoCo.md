@@ -92,24 +92,6 @@ relatedChanges方法输入两个文件的ArrayList<RevCommit> ，返回交叉的
 
 
 
-### utility
-
-#### FileOperations
-
-
-
-pathInSources方法中stream().anyMatch：判断的条件里，任意一个元素成功，返回true，当path以项目存放目录中任意一个start时返回true
-
-
-
-
-
-
-
-
-
-
-
 
 
 效率：
